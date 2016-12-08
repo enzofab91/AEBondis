@@ -1,0 +1,9 @@
+CantidadMaximaPasajeros:50
+DemoraPromedioSubir:30
+DemoraPromedioBajar:15
+CantidadParadas:7800
+ProbabilidadCruzamiento:0
+ProbabilidadMutacion:0
+CantidadGeneraciones:10000
+Poblacion:100
+CantidadMaximaCuadras:5
