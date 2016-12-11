@@ -7,12 +7,10 @@ import java.io.IOException;
 
 public class Parametros {
 	public static String getWorkingPath(){
-		return System.getProperty("user.dir") + File.separator + "info" + File.separator;
+		return System.getProperty("user.dir") + File.separator;
 	}
 	
-	public static String getParameter(String ParameterName, int tipo){
-		/* Recibe el nombre del parametro y el tipo a devolver */
-		/* 0 - Int | 1 - String */
+	public static String getParameterString(String ParameterName){
 		String valor = "";
 
 		try {
@@ -25,6 +23,32 @@ public class Parametros {
 			    String token = tokens[0].trim();
 			    if (ParameterName.trim().equals(token)){
 			    	valor = tokens[1];
+			    }
+			    line = parametros.readLine();
+			}
+				
+			parametros.close();
+		} catch(IOException e){
+			System.out.println("Parametros:getParameter - Archivo no encontrado");
+			System.exit(-1);
+		}
+		
+		return valor;
+	}
+	
+	public static int getParameterInt(String ParameterName){
+		int valor = 0;
+
+		try {
+			String parameterPath = getWorkingPath() + "parametros";
+			BufferedReader parametros = new BufferedReader(new FileReader(parameterPath));
+			String line = parametros.readLine();
+			
+			while (line != null &&  valor == 0) {
+				String[] tokens = line.split(":");
+			    String token = tokens[0].trim();
+			    if (ParameterName.trim().equals(token)){
+			    	valor = Integer.parseInt(tokens[1]);
 			    }
 			    line = parametros.readLine();
 			}

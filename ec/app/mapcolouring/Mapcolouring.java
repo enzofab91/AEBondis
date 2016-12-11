@@ -19,13 +19,6 @@ public class Mapcolouring extends Problem implements SimpleProblemForm {
 	        IntegerVectorIndividual ind2 = (IntegerVectorIndividual)ind;
 	        IntegerVectorSpecies t_spe = (IntegerVectorSpecies)ind2.species;
 	        
-	        String par = Parametros.getParameter("CantidadMaximaPasajeros", 1);
-	        
-	        System.out.println(par);
-	        String ruta = System.getProperty("user.dir");
-	    			
-	    	System.out.println("Ruta = " + ruta);
-	        
 	        double fitness=0;
 	        int [][] limites = t_spe.getLimitesBarrios();
 
