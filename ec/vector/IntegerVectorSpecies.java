@@ -96,7 +96,6 @@ import java.io.IOException;
  
 public class IntegerVectorSpecies extends VectorSpecies
     {
-	
 	/*****************************************************************/
 	/* VARIABLES DEL PROBLEMA PARTICULAR BUS STOP RELOCATION PROBLEM */
 	/*****************************************************************/
@@ -349,7 +348,7 @@ public class IntegerVectorSpecies extends VectorSpecies
         mutationType = fill(new int[genomeSize + 1], -1);
         mutationIsBounded = new boolean[genomeSize + 1];
         randomWalkProbability = new double[genomeSize + 1];
-
+        
         try {
         	/* Obtengo la ruta donde se encuentran los archivos y el nombre del archivo de las lineas del problema   */
         	String filesPath = Parametros.getParameterString("RutaArchivos");

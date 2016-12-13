@@ -1,6 +1,19 @@
 package ec.vector;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import ec.*;
+import ec.app.BusStopRelocationProblem.SDTs.SDTCoordenadas;
+import ec.app.BusStopRelocationProblem.SDTs.SDTSubenBajan;
+import ec.app.BusStopRelocationProblem.utils.Parametros;
 import ec.util.*;
 
 /* 
@@ -255,7 +268,7 @@ public class FloatVectorSpecies extends VectorSpecies
         The top element in the array represents the parameters for genes in
         genomes which have extended beyond the genome length.  */
     protected double[] randomWalkProbability;
-
+    
     /** The number of times Polynomial Mutation or Gaussian Mutation retry for valid
         numbers until they get one. */
     public int outOfBoundsRetries;
@@ -343,8 +356,7 @@ public class FloatVectorSpecies extends VectorSpecies
         else
             return false; // dunno what the individual is...
         }
-
-
+    
     public void setup(final EvolutionState state, final Parameter base)
         {
         Parameter def = defaultBase();
@@ -369,7 +381,6 @@ public class FloatVectorSpecies extends VectorSpecies
         mutationIsBounded = new boolean[genomeSize + 1];
         randomWalkProbability = fill(new double[genomeSize + 1], Double.NaN);
         
-
         // GLOBAL MIN/MAX GENES
         
         double _minGene = state.parameters.getDoubleWithDefault(base.push(P_MINGENE), def.push(P_MINGENE), 0);

@@ -7,23 +7,19 @@ quit-on-run-complete	= true
 # Defino las variables generales al problema
 pop.subpop.0.size =                     50
 
-pop.subpop.0.species = ec.vector.IntegerVectorSpecies
-pop.subpop.0.species.ind		= ec.vector.IntegerVectorIndividual
-pop.subpop.0.species.min-gene	= 0
-pop.subpop.0.species.max-gene	= 1000
+#pop.subpop.0.species = ec.vector.IntegerVectorSpecies
+#pop.subpop.0.species.ind		= ec.vector.IntegerVectorIndividual
+#pop.subpop.0.species.min-gene	= 0
+#pop.subpop.0.species.max-gene	= 1000
+
+pop.subpop.0.species 		= ec.vector.GeneVectorSpecies
+pop.subpop.0.species.ind 	= ec.vector.GeneVectorIndividual
+pop.subpop.0.species.gene 	= ec.app.BusStopRelocationProblem.BusProblemLine
 
 pop.subpop.0.species.fitness.num-objectives = 2
 pop.subpop.0.species.fitness.maximize = false
 
-#pop		= ec.Population
-#init		= ec.simple.SimpleInitializer
-#finish		= ec.simple.SimpleFinisher
-#breed		= ec.simple.SimpleBreeder
-#eval		= ec.simple.SimpleEvaluator
-#stat		= ec.simple.SimpleStatistics
-#exch		= ec.simple.SimpleExchanger
-
-pop.subpop.0.species.genome-size	= 10
+pop.subpop.0.species.genome-size	= 7800
 pop.subpop.0.species.crossover-type	= one
 pop.subpop.0.species.mutation-type	= reset
 pop.subpop.0.species.mutation-prob	= 0.01

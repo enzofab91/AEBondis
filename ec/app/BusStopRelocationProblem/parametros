@@ -4,8 +4,11 @@ CantidadMaximaPasajeros:50
 DemoraPromedioSubir:30
 DemoraPromedioBajar:15
 CantidadParadas:7800
-ProbabilidadCruzamiento:0
-ProbabilidadMutacion:0
-CantidadGeneraciones:10000
-Poblacion:100
 CantidadMaximaCuadras:5
+CostoCombustible:5
+CostoSalario:100
+GananciaPorViaje:28
+StopTime:5
+BoardTime:5
+AlightTime:3
+WalkingSpeed:5

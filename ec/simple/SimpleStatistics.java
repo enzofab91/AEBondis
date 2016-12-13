@@ -191,7 +191,7 @@ public class SimpleStatistics extends Statistics implements SteadyStateStatistic
                     ((SimpleProblemForm)(state.evaluator.p_problem.clone())).describe(state, best_of_run[x], x, 0, statisticslog);      
 
             //Genero el archivo CSV con la asignación de colores
-            try{
+            /*try{
                 File fout = new File("asignacion_colores.csv");
                 FileOutputStream fos = new FileOutputStream(fout);
                 
@@ -206,6 +206,25 @@ public class SimpleStatistics extends Statistics implements SteadyStateStatistic
             }
             catch (IOException e){
                 System.out.println("Error al escribir el csv con la asignacion de colores.");
+            }*/
+            
+            /* Genero archivo con ls solucion */
+            /* TODO: version inicial que imprime el valor nada mas */
+            try {
+            	File fout = new File("solucion.out");
+                FileOutputStream fos = new FileOutputStream(fout);
+                
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+                
+                IntegerVectorIndividual ind = (IntegerVectorIndividual) best_of_run[x];
+                for (int i= 0; i < ind.genome.length;i++){
+                    bw.write(i+1+","+ind.genome[i]);
+                    bw.newLine();
+                }
+                
+                bw.close();
+            } catch (IOException e){
+            	System.out.println("ERROR: SimpleStatistics falla al escribir solucion.");
             }
         }
     }

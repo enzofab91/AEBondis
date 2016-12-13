@@ -1,16 +1,20 @@
 package ec.app.BusStopRelocationProblem.utils;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.io.Writer;
 
 public class DebugFileLog {
 	public void DebugFileLog(String fileName, String line){
 		try {
 			String filesPath = Parametros.getParameterString("RutaArchivos");
-			PrintWriter writer = new PrintWriter(filesPath + "debug/" +  fileName, "UTF-8");
+			//PrintWriter writer = new PrintWriter(filesPath + "debug/" +  fileName, "UTF-8");
+			Writer output = new BufferedWriter(new FileWriter(filesPath + "debug/" +  fileName, true));
 
-			writer.println(line);
+			output.append(line + "\n");
 			
-			writer.close();
+			output.close();
 		} catch(Exception e){
   	  		System.out.println("ERROR: Fallo en DebugFileLog. STACK = " + e);
   	  	}

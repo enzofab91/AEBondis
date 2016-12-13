@@ -20,7 +20,7 @@ public class Mapcolouring extends Problem implements SimpleProblemForm {
 	        IntegerVectorSpecies t_spe = (IntegerVectorSpecies)ind2.species;
 	        
 	        double fitness=0;
-	        int [][] limites = t_spe.getLimitesBarrios();
+	        /*int [][] limites = t_spe.getLimitesBarrios();
 
 	        //CALCULO EL FITNESS
 	        for (int i=0;i<ind2.genome.length;i++){
@@ -28,7 +28,7 @@ public class Mapcolouring extends Problem implements SimpleProblemForm {
 	        		if (ind2.genome[limites[i][j]-1]==ind2.genome[i])
 	        			fitness+=1;
 	        	}
-	        }
+	        }*/
 
 	        //Asigno el fitness al individuo
 	        if (!(ind2.fitness instanceof SimpleFitness))
