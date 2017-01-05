@@ -1,26 +1,25 @@
 parent.0 = ../moosuite/moosuite.params
 eval.problem		= ec.app.BusStopRelocationProblem.BusStopRelocationProblem
 
-generations				= 10000
+generations				= 10
 quit-on-run-complete	= true
 
 # Defino las variables generales al problema
-pop.subpop.0.size =                     50
-
-#pop.subpop.0.species = ec.vector.IntegerVectorSpecies
-#pop.subpop.0.species.ind		= ec.vector.IntegerVectorIndividual
-#pop.subpop.0.species.min-gene	= 0
-#pop.subpop.0.species.max-gene	= 1000
+pop 				= ec.Population
+pop.subpops  		= 1
+pop.subpop.0 		= ec.Subpopulation
+pop.subpop.0.size 	= 20
 
 pop.subpop.0.species 		= ec.vector.GeneVectorSpecies
 pop.subpop.0.species.ind 	= ec.vector.GeneVectorIndividual
 pop.subpop.0.species.gene 	= ec.app.BusStopRelocationProblem.BusProblemLine
 
 pop.subpop.0.species.fitness.num-objectives = 2
-pop.subpop.0.species.fitness.maximize = false
+pop.subpop.0.species.fitness.maximize = true
 
-pop.subpop.0.species.genome-size	= 7800
+pop.subpop.0.species.genome-size	= 10
 pop.subpop.0.species.crossover-type	= one
+#pop.subpop.0.species.crossover-prop = 0.25 #para cuando es uniforme
 pop.subpop.0.species.mutation-type	= reset
 pop.subpop.0.species.mutation-prob	= 0.01
 
@@ -31,6 +30,5 @@ pop.subpop.0.species.pipe.source.0.likelihood 	= 0.75
 pop.subpop.0.species.pipe.source.0.source.0 	= ec.select.TournamentSelection
 pop.subpop.0.species.pipe.source.0.source.1 	= same
 select.tournament.size 							= 2
-
 
 seed.0		= time

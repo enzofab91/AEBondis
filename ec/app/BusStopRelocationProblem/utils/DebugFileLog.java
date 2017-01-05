@@ -6,10 +6,9 @@ import java.io.PrintWriter;
 import java.io.Writer;
 
 public class DebugFileLog {
-	public void DebugFileLog(String fileName, String line){
+	public final static void DebugFileLog(String fileName, String line){
 		try {
 			String filesPath = Parametros.getParameterString("RutaArchivos");
-			//PrintWriter writer = new PrintWriter(filesPath + "debug/" +  fileName, "UTF-8");
 			Writer output = new BufferedWriter(new FileWriter(filesPath + "debug/" +  fileName, true));
 
 			output.append(line + "\n");

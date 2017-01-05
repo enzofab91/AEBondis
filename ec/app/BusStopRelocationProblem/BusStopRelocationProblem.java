@@ -35,18 +35,29 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 		  	  	
 		  	  	BusProblemLine busLine;
 		  	  	
-		  	  	/* Obtenvo constantes del problema */
+		  	  	DebugFileLog.DebugFileLog("pruebaFitness", "entro");
+		  	  	
+		  	  	/* Obtengo constantes del problema */
 		  	  	int cantidadLineas = t_spe.getCantidadLineas();
 		  	  	int gananciaPorViaje = t_spe.getGananciaPorViaje(); 
 		  	  	int costoCombustible = t_spe.getCostoCombustible();
 		  	  	int costoSalario = t_spe.getCostoSalario();
 		  	  	
+		  	  	int stopTime = t_spe.getStopTime(); 
+		  	  	int boardTime = t_spe.getBoardTime();
+		  	  	int alightTime = t_spe.getAlightTime();
+		  	  	int walkingSpeed = t_spe.getWalkingSpeed();
+
 		  	  	for (int i = 0; i < cantidadLineas; i++) {
 		  	  		/* Para cada linea recorro sus paradas */
 		  	  		busLine = (BusProblemLine)ind2.genome[i];
 		  	  		
 		  	  		List<BusStop> paradas = busLine.getParadas();
+		  	  		
+		  	  		
+		  	  		DebugFileLog.DebugFileLog("pruebaFitness", "LINEA = " + busLine.toString());
 		  	  		for (int j = 0; j < paradas.size()-1 ; j++){
+		  	  			DebugFileLog.DebugFileLog("pruebaFitness", "parada(" + Integer.toString(j) + ") = " + paradas.get(j).toString());
 			  			/* Me aseguro que la parada existe */
 			  			/* Busco la siguiente parada */
 			  			int t = j + 1;
@@ -57,14 +68,11 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 			  				double distancia = CalcularDistancia.calcularDistancia(j_esimaParada.getLatitud(),paradas.get(j).getLongitud(),
 			  						j_esimaParada.getLatitud(),paradas.get(t).getLongitud());
 			  				
-			  				double tiempo_recorrido = (CalcularDistancia.calcularDistancia(j_esimaParada.getLatitud(),j_esimaParada.getLongitud(),
-			  						j_esimaParada.getLatitud(),j_esimaParada.getLongitud()) / 12.5) / 60;
-			  				
-			  				double tiempo_pasajeros = t_spe.getDemoraPromedioBajar() * j_esimaParada.getBajan() + 
-			  						t_spe.getDemoraPromedioSubir() * j_esimaParada.getSuben() / 60;
+			  				double tiempoEntreParadas = CalcularDistancia.calcularDistancia(j_esimaParada.getLatitud(),j_esimaParada.getLongitud(),
+			  						j_esimaParada.getLatitud(),j_esimaParada.getLongitud()); // / 12.5) /// 60;
 			  				
 			  				// Fitness1: minimizar el tiempo de recorrido
-			  				fitness1 += 0;
+			  				fitness1 += stopTime + (j_esimaParada.getSuben() * boardTime) + tiempoEntreParadas;
 			  				
 			  				// Fitness 2: maximizar la ganancia de la empresa (ganancia - costos)
 			  				fitness2 += (j_esimaParada.getSuben() * gananciaPorViaje) - 

@@ -66,4 +66,12 @@ public class BusStop {
 	public void setLatitud(double latitud) {
 		this.latitud = latitud;
 	}
+	
+	@Override
+	public String toString(){
+		String ret = "";
+		ret = "BusStop {Parada: " + this.parada + ", Suben: " + this.suben + ", Bajan: " + this.bajan + ", Offset: ";
+		ret += this.offset + ", Longitud: " + this.longitud + ", Latitud: " + this.latitud + "}";
+		return ret;
+	}
 }

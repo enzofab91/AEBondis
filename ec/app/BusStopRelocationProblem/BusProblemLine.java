@@ -3,48 +3,55 @@ package ec.app.BusStopRelocationProblem;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import ec.EvolutionState;
+import ec.Population;
 import ec.app.BusStopRelocationProblem.BusStop;
+import ec.app.BusStopRelocationProblem.SDTs.SDTCoordenadas;
+import ec.app.BusStopRelocationProblem.SDTs.SDTSubenBajan;
+import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
+import ec.app.BusStopRelocationProblem.utils.Parametros;
 import ec.util.MersenneTwister;
-import ec.util.MersenneTwisterFast;
 import ec.vector.Gene;
+import ec.vector.VectorIndividual;
 
 public class BusProblemLine extends Gene{
 	private int linea;
-	private int k;
-	private List<BusStop> paradas = new LinkedList<BusStop>();
+	private int asientosDisponibles;
+	private List<BusStop> paradas;
 	
 	MersenneTwister mt = new MersenneTwister();
 	
 	/* FUNCIONES PROPIAS DE BUS PROBLEM LINE */
-	
 	public BusProblemLine(){};
 	
-	public BusProblemLine(int linea, int k){
+	public BusProblemLine(int linea, int asientosDisponibles){
 		this.linea = linea;
-		this.k = k;
+		this.asientosDisponibles = asientosDisponibles;
 	}
 	
 	public int getLine(){
-		return linea;
+		return this.linea;
 	}
 	
-	public int getK(){
-		return k;
+	public int getAsientosDisponibles(){
+		return this.asientosDisponibles;
 	}
 	
 	public List<BusStop> getParadas(){
 		return paradas;
 	}
 	
-	public void setK(int k) {
-		if(k > 50)
-			this.k = 50;
-		else if(k < 0)
-			this.k = 0;
+	public void setAsientosDisponibles(int asientosDisponibles) {
+		int cantidadMaximaPasajeros = Parametros.getParameterInt("CantidadMaximaPasajeros");
+		if(this.asientosDisponibles > cantidadMaximaPasajeros)
+			this.asientosDisponibles = cantidadMaximaPasajeros;
+		else if(this.asientosDisponibles < 0)
+			this.asientosDisponibles = 0;
 		else
-			this.k = k;
+			this.asientosDisponibles = asientosDisponibles;
 	}
 	
 	public void setParadas(List<BusStop> paradas){
@@ -59,9 +66,6 @@ public class BusProblemLine extends Gene{
 		List<BusStop> paradas_nuevas = new LinkedList<BusStop>();
 		
 		Iterator<BusStop> it = paradas.iterator();
-		
-		int indice = 0;
-		boolean encontre = false;
 		
 		while(it.hasNext()){
 			BusStop bs = it.next();
@@ -119,9 +123,9 @@ public class BusProblemLine extends Gene{
 		 return bps;
 	}
 	
-	/*public int getPseudoRandomStop(){
-		return paradas.get(randomGenerator.nextInt(0, paradas.size()-1)).getParada();
-	}*/
+	public int getPseudoRandomStop(){
+		return paradas.get(mt.nextInt(paradas.size()-1)).getParada();
+	}
 	
 	public BusStop checkBusStopInLine(int nro_parada){
 		Iterator<BusStop> it = paradas.listIterator();
@@ -144,14 +148,55 @@ public class BusProblemLine extends Gene{
 	
 	/* FUNCIONES DE EJC */
 	public void reset(EvolutionState state, int thread) {
-		//double alpha = state.random[thread].nextDouble() * Math.PI * 2;
-		//x = Math.cos(alpha); y = Math.sin(alpha);
+		/* INICIALIZAR LA POBLACION */
+		BusProblemInformation information = BusProblemInformation.getBusProblemInformation();
+		SDTSubenBajan[][] matrizPasajeros = information.getMatrizDemanda();
+		Map<Integer, SDTCoordenadas> coordenadas = information.getCoordenadas();
+		Map<Integer, Integer> lineas = information.getCorrelacion();
+		
+		int posicion = information.getLineaActual(); //entry.getKey();
+		int linea = 0;
+		
+		for (Entry<Integer, Integer> entry : lineas.entrySet()) {
+			if (entry.getValue().equals(posicion))
+				linea = entry.getKey();
+		}
+			
+		this.linea = linea;
+		this.asientosDisponibles = Parametros.getParameterInt("CantidadMaximaPasajeros");
+		Iterator<Integer> ordenParadas = information.getOrdenParadas().get(linea).iterator();
+		
+		this.paradas = new LinkedList<BusStop>();
+		while(ordenParadas.hasNext()){
+			int aux = ordenParadas.next();
+		    if(matrizPasajeros[posicion][aux] != null){
+		    	BusStop bps = null;
+			    	
+			    int bajan = 0;
+			    int suben = 0;
+			    	
+			    if (matrizPasajeros[posicion][aux].getBajan() > 0)
+					bajan = mt.nextInt(matrizPasajeros[posicion][aux].getBajan());
+			    	
+			    if (matrizPasajeros[posicion][aux].getSuben() > 0)
+			    	suben = mt.nextInt(matrizPasajeros[posicion][aux].getSuben());
+			
+			    			
+		    	if(getAsientosDisponibles() >= (suben - bajan)){
+		    		bps = new BusStop(suben,bajan,aux,coordenadas.get(aux).getLatitud(),coordenadas.get(aux).getLogitud(),0); 
+		    	} else {
+		    		bps = new BusStop(getAsientosDisponibles() + bajan,bajan,aux,coordenadas.get(aux).getLatitud(),coordenadas.get(aux).getLogitud(),0); 
+		    	}
+		    	
+		    	setAsientosDisponibles(getAsientosDisponibles() + bps.getBajan());
+		    	setAsientosDisponibles(getAsientosDisponibles() - bps.getSuben());
+
+		    	agregarParada(bps);
+			  }
+		}
 	}
 		
 	public void mutate(EvolutionState state, int thread) {
-		//double alpha = Math.atan2(y,x);
-		//double dalpha = (state.random[thread].nextDouble() - 0.5) * Math.PI * 2 / 100.0;
-		//x = Math.cos(alpha + dalpha); y = Math.sin(alpha + dalpha);
 		reset(state, thread);
 	}
 	
@@ -163,17 +208,27 @@ public class BusProblemLine extends Gene{
 		
 	public boolean equals(Object other) {
 		return (other != null && other instanceof BusProblemLine &&
-		((BusProblemLine)other).linea == linea && ((BusProblemLine)other).k == k && ((BusProblemLine)other).paradas == paradas);
+		((BusProblemLine)other).linea == linea && ((BusProblemLine)other).asientosDisponibles == asientosDisponibles && ((BusProblemLine)other).paradas == paradas);
 	}
 	
 	public String printGeneToStringForHumans() { 
-		return ">";
+		return toString();
 	}
 		
 	public String printGeneToString() {
-		return ">";
+		return toString();
 	}
+	
+	public String toString() {
+		String ret = "";
 		
+		ret = "BusProblemLine {Linea: " + this.linea + ", asientosDisponibles: " + this.asientosDisponibles + ", Paradas: [";
+		ret += this.paradas.toString();
+		ret += "]}";
+		
+		return ret;
+	}
+	
 	/*public void readGeneFromString(String string, EvolutionState state) {
 		string = string.trim().substring(0); // get rid of the ">"
 		//DecodeReturn dr = new DecodeReturn(string);

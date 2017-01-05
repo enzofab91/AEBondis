@@ -64,10 +64,8 @@ public class GeneVectorSpecies extends VectorSpecies
 	
 	private int cantLines; // Cantidad de lineas del problema 
 	private int cantParadas = Parametros.getParameterInt("CantidadParadas"); // Cantidad de paradas del problema
-	
-	private int demoraPromedioSubir = Parametros.getParameterInt("DemoraPromedioSubir");
-	private int demoraPromedioBajar = Parametros.getParameterInt("DemoraPromedioBajar");
-	
+	private int cantMaximaPasajeros = Parametros.getParameterInt("CantidadMaximaPasajeros"); // Cantidad de pasajeros maxima por bus
+			
 	private int gananciaPorViaje = Parametros.getParameterInt("GananciaPorViaje");
 	private int costoCombustible = Parametros.getParameterInt("CostoCombustible");
 	private int costoSalario = Parametros.getParameterInt("CostoSalario");
@@ -113,6 +111,10 @@ public class GeneVectorSpecies extends VectorSpecies
 		return this.cantParadas;
 	}
     
+    public int getCantidadMaximaPasajeros() {
+		return this.cantMaximaPasajeros;
+	}
+    
     public Map<Integer, SDTCoordenadas> getCoordenadas() {
 		return this.coordenadas;
 	}
@@ -127,14 +129,6 @@ public class GeneVectorSpecies extends VectorSpecies
     
     public Map<Integer, List<Integer>> getOrdenParadas() {
 		return this.ordenParadas;
-	}
-    
-    public int getDemoraPromedioSubir() {
-		return this.demoraPromedioSubir;
-	}
-    
-    public int getDemoraPromedioBajar() {
-		return this.demoraPromedioBajar;
 	}
     
     public int getGananciaPorViaje() {
@@ -222,7 +216,7 @@ public class GeneVectorSpecies extends VectorSpecies
     public void setup(final EvolutionState state, final Parameter base)
         {
         Parameter def = defaultBase();
-
+        
         genePrototype = (Gene)(state.parameters.getInstanceForParameterEq(
                 base.push(P_GENE),def.push(P_GENE),Gene.class));
         genePrototype.setup(state,base.push(P_GENE));

@@ -1,8 +1,6 @@
 RutaArchivos:/home/enzofabbiani/Desktop/PROYECTO/AEBondis/info/
 ArchivoLineas:lineas
 CantidadMaximaPasajeros:50
-DemoraPromedioSubir:30
-DemoraPromedioBajar:15
 CantidadParadas:7800
 CantidadMaximaCuadras:5
 CostoCombustible:5
@@ -12,3 +10,4 @@ StopTime:5
 BoardTime:5
 AlightTime:3
 WalkingSpeed:5
+Mutacion:ElegirAccion
