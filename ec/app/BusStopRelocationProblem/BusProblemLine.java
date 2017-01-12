@@ -62,7 +62,7 @@ public class BusProblemLine extends Gene{
 		paradas.add(stop);
 	}
 	
-	public void nuevaParada(int parada, int offset){
+	public void nuevaParada(int parada, int desplazamiento){
 		List<BusStop> paradas_nuevas = new LinkedList<BusStop>();
 		
 		Iterator<BusStop> it = paradas.iterator();
@@ -72,7 +72,7 @@ public class BusProblemLine extends Gene{
 			paradas_nuevas.add(bs);
 		}
 		
-		BusStop bps_new = funcionMagica(paradas_nuevas, parada, offset);
+		BusStop bps_new = funcionMagica(paradas_nuevas, parada, desplazamiento);
 		
 		paradas_nuevas.add(parada,bps_new);
 		this.paradas = paradas_nuevas;
@@ -80,10 +80,10 @@ public class BusProblemLine extends Gene{
 	}
 	
 	public void quitarParada(int parada){
-		paradas.get(parada).setOffset(-1);
+		paradas.get(parada).setEstado(EstadoParada.ELIMINADA);
 	}
 	
-	private BusStop funcionMagica(List<BusStop> paradas, int indice, int offset){
+	private BusStop funcionMagica(List<BusStop> paradas, int indice, int desplazamiento){
 		//Esta funcion magica se encarga de tomar gente que sube/baja de las paradas siguiente y anterior de la nueva parada
 		// que corresponden a la parada misma y la siguiente
 		//Ademas se quitan de la parada siguiente/anterior los valores obtenidos de personas que suben y bajan
@@ -102,23 +102,13 @@ public class BusProblemLine extends Gene{
 		parada_anterior.setSuben( parada_anterior.getSuben() - quito_anterior_suben);
 		parada_anterior.setBajan(parada_anterior.getBajan() - quito_anterior_bajan);
 		
-		//Aca se calculan las coordenadas de la nueva parada a partir de la parada anterior y el offset
-		/* http://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters */
+		//Aca se calculan las coordenadas de la nueva parada a partir de la parada anterior y el desplazamiento
+		double[] coordinates = Operaciones.nuevaUbicacion(parada_anterior.getLatitud(), parada_anterior.getLongitud(), desplazamiento);
+		double nueva_longitud = coordinates[0], nueva_latitud = coordinates[1];
 		
-		//Earth’s radius, sphere
-		int R = 6378137;
-	
-		//Coordinate offsets in radians
-		double dLat = (offset*100)/R;
-		double dLon = (offset*100)/(R*Math.cos(Math.PI*parada_anterior.getLatitud()/180));
-	
-		//OffsetPosition, decimal degrees
-		double nueva_longitud = parada_anterior.getLatitud() + dLat * 180/Math.PI;
-		double nueva_latitud = parada_anterior.getLongitud() + dLon * 180/Math.PI; 
-		 
 		BusStop bps = new BusStop(quito_anterior_suben + quito_siguiente_suben, 
-				 			quito_anterior_bajan + quito_siguiente_bajan, BusStop.getMAX_K(),
-				 			nueva_longitud, nueva_latitud, offset);
+				 			quito_anterior_bajan + quito_siguiente_bajan, BusStop.getNuevoIdentificador(),
+				 			nueva_longitud, nueva_latitud, EstadoParada.DESPLAZADA, desplazamiento);
 		 
 		 return bps;
 	}
@@ -183,9 +173,9 @@ public class BusProblemLine extends Gene{
 			
 			    			
 		    	if(getAsientosDisponibles() >= (suben - bajan)){
-		    		bps = new BusStop(suben,bajan,aux,coordenadas.get(aux).getLatitud(),coordenadas.get(aux).getLogitud(),0); 
+		    		bps = new BusStop(suben,bajan,aux,coordenadas.get(aux).getLatitud(),coordenadas.get(aux).getLogitud(),EstadoParada.ACTUAL,0); 
 		    	} else {
-		    		bps = new BusStop(getAsientosDisponibles() + bajan,bajan,aux,coordenadas.get(aux).getLatitud(),coordenadas.get(aux).getLogitud(),0); 
+		    		bps = new BusStop(getAsientosDisponibles() + bajan,bajan,aux,coordenadas.get(aux).getLatitud(),coordenadas.get(aux).getLogitud(),EstadoParada.ACTUAL,0); 
 		    	}
 		    	
 		    	setAsientosDisponibles(getAsientosDisponibles() + bps.getBajan());
@@ -197,8 +187,70 @@ public class BusProblemLine extends Gene{
 	}
 		
 	public void mutate(EvolutionState state, int thread) {
-		reset(state, thread);
+		String mutacion = Parametros.getParameterString("Mutacion");
+		
+		if (mutacion.equals("ElegirAccion"))
+			mutateElegirAccion(state, thread);
+		else
+			mutateBusquedaParadaInnecesaria(state, thread);
 	}
+	
+	/* MUTACION DE BUS STOP RELOCATION PROBLEM */
+	private void mutateElegirAccion(EvolutionState state, int thread) {
+		
+	}
+	
+	private void mutateBusquedaParadaInnecesaria(EvolutionState state, int thread) {
+		/* Se elige una linea de la solucion aleatoriamente. Luego, se busca si existen dos paradas */
+		/* consecutivas que no suba gente y si las hay se eliminan esas dos y se juntan en una 		*/
+		/* unica parada en el punto medio de la distancia entre ambas								*/
+		
+		/* Busco si existen dos paradas consecutivas que no se suba nadie */
+		Iterator<BusStop> iter = paradas.listIterator();
+		
+		BusStop stop1 = null;
+		BusStop stop2 = null;
+		
+		boolean existeCombinacion = false;
+		int posicion = 0, indice = 0;
+		
+		while (!existeCombinacion && iter.hasNext()){
+			stop1 = iter.next();
+			
+			if (stop1.getSuben() == 0){
+				stop2 = iter.next();
+				if (stop2.getSuben() == 0){
+					/* CONSECUTIVAS. Corto la busqueda */
+					posicion = indice;
+					existeCombinacion = true;
+				}
+			}
+			
+			indice++;
+		}
+		
+		if (existeCombinacion){
+			/* Hay 3 casos: si es la parada origen y la siguiente, simplemente elimino la siguiente. */
+			/* Si es la parada destino y la anterior, simplemente elimino la anterior. Esto es asi	 */
+			/* porque los origenes y destinos de las lineas no pueden ser modificados. Si son		 */
+			/* un par cualquiera del medio, ahi si se quitan y se agrega la del punto medio			 */
+			
+			if (posicion == 0){
+				quitarParada(0);
+			} else if (posicion == paradas.size() - 1){
+				quitarParada(paradas.size() - 1);
+			} else {
+				double coordinates[] = Operaciones.puntoMedio(stop1.getLatitud(), stop1.getLongitud(), stop2.getLatitud(), stop2.getLongitud());
+				double latitud = coordinates[0], longitud = coordinates[1];
+				
+				BusStop nuevaParada = new BusStop(0,stop1.getBajan()+stop2.getBajan(),BusStop.getNuevoIdentificador(),latitud,longitud,EstadoParada.NUEVA,0);
+				agregarParada(nuevaParada);
+			}
+			
+		}
+		
+	}
+	/* FIN DE MUTACION DE BUS STOP RELOCATION PROBLEM */
 	
 	public int hashCode() {
 		return linea;

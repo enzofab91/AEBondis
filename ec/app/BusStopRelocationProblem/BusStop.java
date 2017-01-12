@@ -4,39 +4,46 @@ public class BusStop {
 	private int suben;
 	private int bajan;
 	private int parada;
-	private int offset;
-	//En caso de que la parada sea nueva, las coordenadas las originalies desplazadas
+	private EstadoParada estado;
+	private int desplazamiento;
+	
 	private double longitud;
 	private double latitud;
-	private static int MAX_K = 10000;
 	
-	public BusStop(int suben, int bajan, int parada, double latitud, double longitud, int offset){
+	private static int nuevoIdentificador = 10000;
+	
+	public BusStop(int suben, int bajan, int parada, double latitud, double longitud, EstadoParada estado, int desplazamiento){
 		this.suben = suben;
 		this.bajan = bajan;
 		this.parada = parada;
 		this.longitud = longitud;
 		this.latitud = latitud;
-		this.offset = offset;
+		this.estado = estado;
+		this.desplazamiento = desplazamiento;
 	}
 	
 	public int getSuben(){
-		return suben;
+		return this.suben;
 	}
 	
 	public int getBajan(){
-		return bajan;
+		return this.bajan;
 	}
 	
 	public int getParada(){
-		return parada;
+		return this.parada;
 	}
 	
-	public int getOffset(){
-		return offset;
+	public int getDesplazamiento(){
+		return this.desplazamiento;
 	}
 	
-	public void setOffset(int offset){
-		this.offset = offset;
+	public EstadoParada getEstado(){
+		return this.estado;
+	}
+	
+	public void setDesplazamiento(int desplazamiento){
+		this.desplazamiento = desplazamiento;
 	}
 	
 	public void setSuben(int suben){
@@ -47,8 +54,12 @@ public class BusStop {
 		this.bajan = bajan;
 	}
 	
-	public static int getMAX_K(){
-		return ++MAX_K;
+	public void setEstado(EstadoParada estado){
+		this.estado = estado;
+	}
+	
+	public static int getNuevoIdentificador(){
+		return ++nuevoIdentificador;
 	}
 
 	public double getLongitud() {
@@ -70,8 +81,9 @@ public class BusStop {
 	@Override
 	public String toString(){
 		String ret = "";
-		ret = "BusStop {Parada: " + this.parada + ", Suben: " + this.suben + ", Bajan: " + this.bajan + ", Offset: ";
-		ret += this.offset + ", Longitud: " + this.longitud + ", Latitud: " + this.latitud + "}";
+		ret = "BusStop {Parada: " + this.parada + ", Suben: " + this.suben + ", Bajan: " + this.bajan + ", Estado: ";
+		ret += this.estado + ", Desplazamiento: " + this.desplazamiento + ", Longitud: " + this.longitud + ", Latitud: ";
+		ret += this.latitud + "}";
 		return ret;
 	}
 }

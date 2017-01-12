@@ -62,13 +62,13 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 			  			/* Busco la siguiente parada */
 			  			int t = j + 1;
 			  			BusStop j_esimaParada;
-			  			while(t < paradas.size() && paradas.get(t).getOffset() != -1){
+			  			while(t < paradas.size() && paradas.get(t).getEstado() != EstadoParada.ELIMINADA){
 			  				j_esimaParada = paradas.get(j);
 			  				
-			  				double distancia = CalcularDistancia.calcularDistancia(j_esimaParada.getLatitud(),paradas.get(j).getLongitud(),
+			  				double distancia = Operaciones.calcularDistancia(j_esimaParada.getLatitud(),paradas.get(j).getLongitud(),
 			  						j_esimaParada.getLatitud(),paradas.get(t).getLongitud());
 			  				
-			  				double tiempoEntreParadas = CalcularDistancia.calcularDistancia(j_esimaParada.getLatitud(),j_esimaParada.getLongitud(),
+			  				double tiempoEntreParadas = Operaciones.calcularDistancia(j_esimaParada.getLatitud(),j_esimaParada.getLongitud(),
 			  						j_esimaParada.getLatitud(),j_esimaParada.getLongitud()); // / 12.5) /// 60;
 			  				
 			  				// Fitness1: minimizar el tiempo de recorrido
