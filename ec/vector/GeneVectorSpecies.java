@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import ec.*;
+import ec.app.BusStopRelocationProblem.BusProblemInformation;
 import ec.app.BusStopRelocationProblem.SDTs.SDTCoordenadas;
 import ec.app.BusStopRelocationProblem.SDTs.SDTSubenBajan;
 import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
@@ -220,72 +221,14 @@ public class GeneVectorSpecies extends VectorSpecies
         genePrototype = (Gene)(state.parameters.getInstanceForParameterEq(
                 base.push(P_GENE),def.push(P_GENE),Gene.class));
         genePrototype.setup(state,base.push(P_GENE));
-        
-        try {
-        	/* Obtengo la ruta donde se encuentran los archivos y el nombre del archivo de las lineas del problema   */
-        	String filesPath = Parametros.getParameterString("RutaArchivos");
-        	String linesPath = Parametros.getParameterString("ArchivoLineas");
-        	String linesFile = filesPath + linesPath;
-        	
-        	/* Abro el archivo, y guardo la cantidad de lineas */
-        	BufferedReader br = new BufferedReader(new FileReader(linesFile));
 
-    		String line = br.readLine();
-    	    String[] lineas = line.split(",");
-    	    
-    	    /* Seteo la cantidad de lineas del problema */
-    	    this.cantLines = lineas.length;
-    	    
-    	    /* Creo la matriz de demanda */
-    	    this.MatrizDemanda = new SDTSubenBajan[this.cantLines][this.cantParadas];
-    	    
-    	    /* 
-    	    	Para cada linea de omnibus del problema, tengo que obtener sus paradas en orden
-    	    	y la cantidad de pasajeros que suben y que bajan en cada parada. Ademas, se
-    	    	guarda las coordenadas de las paradas
-    	    */
-
-    	    for(int i = 0; i < this.cantLines; i++){
-    	    	/* Agrego la correlacion entre la parada y la posicion en la matriz de demanda */
-    	    	this.correlacion.put(Integer.parseInt(lineas[i]), i);
-    	    	
-    	        /* Leo la cantidad de pasajeros que suben y bajan en cada parada de la linea y lo almaceno en la matriz de demanda */
-    	        BufferedReader pasajeros = new BufferedReader(new FileReader(filesPath + lineas[i]+ "_pasajeros"));
-    	        
-    	    	line = pasajeros.readLine();
-    	    	
-    	    	/* Inicializo para la linea i, su lista de paradas */
-    	    	this.ordenParadas.put(Integer.parseInt(lineas[i]), new LinkedList<Integer>());
-    	    	
-    	        while (line != null) {
-    	        	String[] linea = line.split(",");
-    	        	SDTSubenBajan SDT = new SDTSubenBajan(Integer.parseInt(linea[1]), Integer.parseInt(linea[2]));
-    	        	
-    	        	this.MatrizDemanda[i][Integer.parseInt(linea[0])] = SDT;
-    	        	this.ordenParadas.get(Integer.parseInt(lineas[i])).add(Integer.parseInt(linea[0]));
-    	        	
-    	            line = pasajeros.readLine();
-    	        }
-    	        
-    	        pasajeros.close();
-    	    	
-    	    }
-    	    br.close();
-    	    
-    	    /* Almaceno las coordenadas de las paradas */
-	    	BufferedReader coordenadas = new BufferedReader(new FileReader(filesPath + "coordenadas"));
-	    	line = coordenadas.readLine();
-
-	        while (line != null) {
-	        	String[] coordenada = line.split(",");
-	        	this.coordenadas.put(Integer.parseInt(coordenada[0]), new SDTCoordenadas(Double.parseDouble(coordenada[1]), Double.parseDouble(coordenada[2])));
-	            line = coordenadas.readLine();
-	        }
-	        
-	        coordenadas.close();
-        } catch(IOException e){
-            state.output.fatal ("ERROR: Hubo algun problema con la lectura del archivo. STACK = " + e);
-        }
+    	BusProblemInformation information = BusProblemInformation.getBusProblemInformation();
+	    
+	    this.cantLines = information.getCantidadLineas();	    
+	    this.MatrizDemanda = information.getMatrizDemanda();
+	    this.correlacion = information.getCorrelacion();
+	    this.ordenParadas = information.getOrdenParadas();
+        this.coordenadas = information.getCoordenadas();
         
         /* Imprimo el problema para ver que todo fue cargado correctamente */
         //printProblem();

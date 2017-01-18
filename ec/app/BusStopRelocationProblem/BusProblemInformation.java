@@ -23,6 +23,7 @@ public class BusProblemInformation {
 	private int cantLines; // Cantidad de lineas del problema 
 	private int cantParadas = Parametros.getParameterInt("CantidadParadas"); // Cantidad de paradas del problema
 	private int cantMaximaPasajeros = Parametros.getParameterInt("CantidadMaximaPasajeros"); // Cantidad de pasajeros maxima por bus
+	private int nuevaDistanciaMaxima = Parametros.getParameterInt("NuevaDistanciaMaxima"); // Distancia maxima que se desplaza una parada 
 			
 	private int gananciaPorViaje = Parametros.getParameterInt("GananciaPorViaje");
 	private int costoCombustible = Parametros.getParameterInt("CostoCombustible");
@@ -78,6 +79,10 @@ public class BusProblemInformation {
     
     public int getCantidadMaximaPasajeros() {
 		return this.cantMaximaPasajeros;
+	}
+    
+    public int getNuevaDistanciaMaxima() {
+		return this.nuevaDistanciaMaxima;
 	}
     
     public Map<Integer, SDTCoordenadas> getCoordenadas() {

@@ -63,59 +63,45 @@ public class BusProblemLine extends Gene{
 	}
 	
 	public void nuevaParada(int parada, int desplazamiento){
-		List<BusStop> paradas_nuevas = new LinkedList<BusStop>();
+		/* La funcion toma gente que sube/baja de las paradas siguiente y anterior 	 */
+		/* de la nueva parada a agregar, y las distribuye entre la nueva y estas dos */
+		/* Las que se modifican son la inmediatamente siguiente y posterior			 */
 		
-		Iterator<BusStop> it = paradas.iterator();
-		
-		while(it.hasNext()){
-			BusStop bs = it.next();
-			paradas_nuevas.add(bs);
-		}
-		
-		BusStop bps_new = funcionMagica(paradas_nuevas, parada, desplazamiento);
-		
-		paradas_nuevas.add(parada,bps_new);
-		this.paradas = paradas_nuevas;
-		
-	}
-	
-	public void quitarParada(int parada){
-		paradas.get(parada).setEstado(EstadoParada.ELIMINADA);
-	}
-	
-	private BusStop funcionMagica(List<BusStop> paradas, int indice, int desplazamiento){
-		//Esta funcion magica se encarga de tomar gente que sube/baja de las paradas siguiente y anterior de la nueva parada
-		// que corresponden a la parada misma y la siguiente
-		//Ademas se quitan de la parada siguiente/anterior los valores obtenidos de personas que suben y bajan
-		//Falta definir la posibilidad de aceptar nueva gente que suba al bus
-		
-		BusStop parada_siguiente = paradas.get(indice + 1); 
-		BusStop parada_anterior = paradas.get(indice);
+		BusStop parada_siguiente = paradas.get(parada + 1); //parada actual (cuando se agregue la nueva sera la inmediata anterior) 
+		BusStop parada_anterior = paradas.get(parada); //parada siguiente
 		
 		int quito_anterior_suben = mt.nextInt(parada_anterior.getSuben());
 		int quito_anterior_bajan  = mt.nextInt(parada_anterior.getBajan());
 		int quito_siguiente_suben = mt.nextInt(parada_siguiente.getSuben());
 		int quito_siguiente_bajan = mt.nextInt(parada_siguiente.getBajan());
 		
-		parada_siguiente.setSuben( parada_siguiente.getSuben() - quito_siguiente_suben);
+		parada_siguiente.setSuben(parada_siguiente.getSuben() - quito_siguiente_suben);
 		parada_siguiente.setBajan(parada_siguiente.getBajan() - quito_siguiente_bajan);
-		parada_anterior.setSuben( parada_anterior.getSuben() - quito_anterior_suben);
+		parada_anterior.setSuben(parada_anterior.getSuben() - quito_anterior_suben);
 		parada_anterior.setBajan(parada_anterior.getBajan() - quito_anterior_bajan);
 		
-		//Aca se calculan las coordenadas de la nueva parada a partir de la parada anterior y el desplazamiento
-		double[] coordinates = Operaciones.nuevaUbicacion(parada_anterior.getLatitud(), parada_anterior.getLongitud(), desplazamiento);
+		/* Se calculan las coordenadas de la nueva parada a partir de la parada anterior y el desplazamiento */
+		double[] coordinates = Operaciones.nuevaUbicacion(parada_anterior.getLatitud(), 
+				parada_anterior.getLongitud(), desplazamiento);
 		double nueva_longitud = coordinates[0], nueva_latitud = coordinates[1];
 		
-		BusStop bps = new BusStop(quito_anterior_suben + quito_siguiente_suben, 
+		/* Se crea la nueva parada, a partir de las coordenadas, y las personas que se sacaron de las paradas 	*/
+		/* inmediatamente anterior y siguiente																	*/
+		BusStop parada_nueva = new BusStop(quito_anterior_suben + quito_siguiente_suben, 
 				 			quito_anterior_bajan + quito_siguiente_bajan, BusStop.getNuevoIdentificador(),
 				 			nueva_longitud, nueva_latitud, EstadoParada.DESPLAZADA, desplazamiento);
-		 
-		 return bps;
+
+		this.paradas.add(parada,parada_nueva);
 	}
 	
-	public int getPseudoRandomStop(){
-		return paradas.get(mt.nextInt(paradas.size()-1)).getParada();
+	public void quitarParada(int parada){
+		paradas.get(parada).setEstado(EstadoParada.ELIMINADA);
 	}
+	
+	
+	/*public int getPseudoRandomStop(){
+		return paradas.get(mt.nextInt(paradas.size()-1)).getParada();
+	}*/
 	
 	public BusStop checkBusStopInLine(int nro_parada){
 		Iterator<BusStop> it = paradas.listIterator();
@@ -197,7 +183,33 @@ public class BusProblemLine extends Gene{
 	
 	/* MUTACION DE BUS STOP RELOCATION PROBLEM */
 	private void mutateElegirAccion(EvolutionState state, int thread) {
+		//obtenemos que parada modificar y si se queda donde esta, se saca o se modifica (sin ser la primera y ultima)
+		int parada_mutar = 0;
+		while (parada_mutar == 0)	
+			parada_mutar = mt.nextInt(paradas.size());
 		
+		BusProblemInformation info = BusProblemInformation.getBusProblemInformation();
+		int distanciaMaxima = info.getNuevaDistanciaMaxima(); 
+		
+		/* La accion determina que se hace con la parada: 	*/
+		/* 0: la parada a mutar se deja invariable			*/
+		/* -1: la parada a mutar se quita					*/
+		/* num: se crea una nueva parada a partir de la 	*/
+		/* parada a mutar y se mueve una distancia 			*/
+		
+		/* nextInt devuelve entre 0 y distancia-1 ambos 	*/
+		/* incluidos. Esto abarca todo el rango posible 	*/
+		int accion = mt.nextInt(distanciaMaxima + 2) - 1;
+		
+		//mutamos la parada si corresponde
+		if (accion != 0){
+			if(accion == -1){
+				quitarParada(parada_mutar);
+			}
+			else {
+				nuevaParada(parada_mutar,accion);
+			}
+		}
 	}
 	
 	private void mutateBusquedaParadaInnecesaria(EvolutionState state, int thread) {

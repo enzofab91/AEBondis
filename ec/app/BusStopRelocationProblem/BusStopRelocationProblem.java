@@ -23,7 +23,6 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 		        if (!(ind instanceof GeneVectorIndividual))
 		        	state.output.fatal("ERROR: No es un vector de tipo GeneVectorIndividual!",null);
 
-		        //IntegerVectorIndividual ind2 = (IntegerVectorIndividual)ind;
 		        GeneVectorIndividual ind2 = (GeneVectorIndividual)ind;
 		        GeneVectorSpecies t_spe = (GeneVectorSpecies)ind2.species;
 		        
@@ -34,8 +33,6 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 		  	  	double fitness2 = 0; //maximizar ganancia
 		  	  	
 		  	  	BusProblemLine busLine;
-		  	  	
-		  	  	DebugFileLog.DebugFileLog("pruebaFitness", "entro");
 		  	  	
 		  	  	/* Obtengo constantes del problema */
 		  	  	int cantidadLineas = t_spe.getCantidadLineas();
@@ -54,10 +51,7 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 		  	  		
 		  	  		List<BusStop> paradas = busLine.getParadas();
 		  	  		
-		  	  		
-		  	  		DebugFileLog.DebugFileLog("pruebaFitness", "LINEA = " + busLine.toString());
 		  	  		for (int j = 0; j < paradas.size()-1 ; j++){
-		  	  			DebugFileLog.DebugFileLog("pruebaFitness", "parada(" + Integer.toString(j) + ") = " + paradas.get(j).toString());
 			  			/* Me aseguro que la parada existe */
 			  			/* Busco la siguiente parada */
 			  			int t = j + 1;
@@ -69,24 +63,19 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 			  						j_esimaParada.getLatitud(),paradas.get(t).getLongitud());
 			  				
 			  				double tiempoEntreParadas = Operaciones.calcularDistancia(j_esimaParada.getLatitud(),j_esimaParada.getLongitud(),
-			  						j_esimaParada.getLatitud(),j_esimaParada.getLongitud()); // / 12.5) /// 60;
+			  						j_esimaParada.getLatitud(),j_esimaParada.getLongitud());
 			  				
 			  				// Fitness1: minimizar el tiempo de recorrido
 			  				fitness1 += stopTime + (j_esimaParada.getSuben() * boardTime) + tiempoEntreParadas;
 			  				
 			  				// Fitness 2: maximizar la ganancia de la empresa (ganancia - costos)
 			  				fitness2 += (j_esimaParada.getSuben() * gananciaPorViaje) - 
-			  						(costoCombustible + costoSalario) * distancia/1000;
+			  						(costoCombustible + costoSalario) * distancia;
 			  				
 			  				t++;
 			  			}
 		  	  		}
 		  	  	}
-		  	  	
-		        /* Asigno el fitness al individuo */
-		        /*if (!(ind2.fitness instanceof SimpleFitness))
-		            state.output.fatal("Error. No es un SimpleFitness",null);
-		        ((SimpleFitness)ind2.fitness).setFitness(state,fitness*(-1), fitness == 0);*/
 		  	  	
 		        objectives[0] = (-1)*fitness1;
 		        objectives[0] = fitness2;
