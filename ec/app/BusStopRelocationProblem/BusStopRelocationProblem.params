@@ -1,7 +1,7 @@
 parent.0 = ../moosuite/moosuite.params
 eval.problem		= ec.app.BusStopRelocationProblem.BusStopRelocationProblem
 
-generations				= 10
+generations				= 20
 quit-on-run-complete	= true
 
 # Defino las variables generales al problema

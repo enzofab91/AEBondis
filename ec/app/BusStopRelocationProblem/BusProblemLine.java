@@ -99,8 +99,8 @@ public class BusProblemLine extends Gene{
 	}
 	
 	
-	public BusStop getStop(int nroParada){
-		return paradas.get(nroParada);
+	public BusStop getStop(int index){
+		return paradas.get(index);
 	}
 	
 	public BusStop checkBusStopInLine(int nro_parada){

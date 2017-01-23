@@ -237,12 +237,12 @@ public class GeneVectorIndividual extends VectorIndividual
 			cantidadParadas = paradas.size();
 			
 			while(!encontre && iter < cantidadParadas){
-				parada = linea1.getStop(iter).getParada();
+				parada= linea1.getStop(iter).getParada();
 				busStop2 = linea2.checkBusStopInLine(parada);
 				
 				if (busStop2 != null){
 					encontre = true;
-					busStop1 = linea1.getStop(parada);
+					busStop1 = linea1.checkBusStopInLine(parada);
 				}
 				
 				iter++;
