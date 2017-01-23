@@ -2,7 +2,7 @@ RutaArchivos:/home/enzofabbiani/Desktop/PROYECTO/AEBondis/info/
 ArchivoLineas:lineas
 CantidadMaximaPasajeros:50
 CantidadParadas:7800
-CantidadMaximaCuadras:500
+NuevaDistanciaMaxima:500
 CostoCombustible:5
 CostoSalario:100
 GananciaPorViaje:28
@@ -11,3 +11,4 @@ BoardTime:5
 AlightTime:3
 WalkingSpeed:5
 Mutacion:BusquedaParadaInnecesaria
+Crossover:Custom

@@ -8,8 +8,13 @@
 package ec.vector;
 
 import ec.*;
+import ec.app.BusStopRelocationProblem.BusProblemLine;
+import ec.app.BusStopRelocationProblem.BusStop;
+import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
+import ec.app.BusStopRelocationProblem.utils.Parametros;
 import ec.util.*;
 import java.io.*;
+import java.util.List;
 
 /*
  * GeneVectorIndividual.java
@@ -122,87 +127,142 @@ public class GeneVectorIndividual extends VectorIndividual
         int len = Math.min(genome.length, i.genome.length);
         if (len != genome.length || len != i.genome.length)
             state.output.warnOnce("Genome lengths are not the same.  Vector crossover will only be done in overlapping region.");
-
-        switch(s.crossoverType)
-            {
-            case VectorSpecies.C_ONE_POINT:
-//                point = state.random[thread].nextInt((len / s.chunksize)+1);
-                // we want to go from 0 ... len-1 
-                // so that there is only ONE case of NO-OP crossover, not TWO
-                point = state.random[thread].nextInt((len / s.chunksize));
-                for(int x=0;x<point*s.chunksize;x++)
-                    { 
-                    tmp = i.genome[x];
-                    i.genome[x] = genome[x]; 
-                    genome[x] = tmp; 
-                    }
-                break;
-            case VectorSpecies.C_ONE_POINT_NO_NOP:
-                point = state.random[thread].nextInt((len / s.chunksize) - 1) + 1;  // so it goes from 1 .. len-1
-                for(int x=0;x<point*s.chunksize;x++)
-                    { 
-                    tmp = i.genome[x];
-                    i.genome[x] = genome[x]; 
-                    genome[x] = tmp; 
-                    }
-                break;
-            case VectorSpecies.C_TWO_POINT: 
-            {
-//                int point0 = state.random[thread].nextInt((len / s.chunksize)+1);
-//                point = state.random[thread].nextInt((len / s.chunksize)+1);
-            // we want to go from 0 to len-1
-            // so that the only NO-OP crossover possible is point == point0
-            // example; len = 4
-            // possibilities: a=0 b=0       NOP                             [0123]
-            //                                a=0 b=1       swap 0                  [for 1, 2, 3]
-            //                                a=0 b=2       swap 0, 1               [for 2, 3]
-            //                                a=0 b=3       swap 0, 1, 2    [for 3]
-            //                                a=1 b=1       NOP                             [1230]
-            //                                a=1 b=2       swap 1                  [for 2, 3, 0]
-            //                                a=1 b=3       swap 1, 2               [for 3, 0]
-            //                                a=2 b=2       NOP                             [2301]
-            //                                a=2 b=3       swap 2                  [for 3, 0, 1]
-            //                                a=3 b=3   NOP                         [3012]
-            // All intervals: 0, 01, 012, 0123, 1, 12, 123, 1230, 2, 23, 230, 2301, 3, 30, 301, 3012
-            point = state.random[thread].nextInt((len / s.chunksize));
-            int point0 = state.random[thread].nextInt((len / s.chunksize));
-            if (point0 > point) { int p = point0; point0 = point; point = p; }
-            for(int x=point0*s.chunksize;x<point*s.chunksize;x++)
-                {
-                tmp = i.genome[x];
-                i.genome[x] = genome[x];
-                genome[x] = tmp;
-                }
-            }
-            break;
-            case VectorSpecies.C_TWO_POINT_NO_NOP: 
-            {
-            point = state.random[thread].nextInt((len / s.chunksize));
-            int point0 = 0;
-            do { point0 = state.random[thread].nextInt((len / s.chunksize)); }
-            while (point0 == point);  // NOP
-            if (point0 > point) { int p = point0; point0 = point; point = p; }
-            for(int x=point0*s.chunksize;x<point*s.chunksize;x++)
-                {
-                tmp = i.genome[x];
-                i.genome[x] = genome[x];
-                genome[x] = tmp;
-                }
-            }
-            break;
-            case VectorSpecies.C_ANY_POINT:
-                for(int x=0;x<len/s.chunksize;x++) 
-                    if (state.random[thread].nextBoolean(s.crossoverProbability))
-                        for(int y=x*s.chunksize;y<(x+1)*s.chunksize;y++)
-                            {
-                            tmp = i.genome[y];
-                            i.genome[y] = genome[y];
-                            genome[y] = tmp;
-                            }
-                break;
-            }
+        
+        String crossover = Parametros.getParameterString("Crossover");
+        
+        if (!crossover.equals("Custom")){
+	        switch(s.crossoverType)
+	            {
+	            case VectorSpecies.C_ONE_POINT:
+	//                point = state.random[thread].nextInt((len / s.chunksize)+1);
+	                // we want to go from 0 ... len-1 
+	                // so that there is only ONE case of NO-OP crossover, not TWO
+	                point = state.random[thread].nextInt((len / s.chunksize));
+	                for(int x=0;x<point*s.chunksize;x++)
+	                    { 
+	                    tmp = i.genome[x];
+	                    i.genome[x] = genome[x]; 
+	                    genome[x] = tmp; 
+	                    }
+	                break;
+	            case VectorSpecies.C_ONE_POINT_NO_NOP:
+	                point = state.random[thread].nextInt((len / s.chunksize) - 1) + 1;  // so it goes from 1 .. len-1
+	                for(int x=0;x<point*s.chunksize;x++)
+	                    { 
+	                    tmp = i.genome[x];
+	                    i.genome[x] = genome[x]; 
+	                    genome[x] = tmp; 
+	                    }
+	                break;
+	            case VectorSpecies.C_TWO_POINT: 
+	            {
+	//                int point0 = state.random[thread].nextInt((len / s.chunksize)+1);
+	//                point = state.random[thread].nextInt((len / s.chunksize)+1);
+	            // we want to go from 0 to len-1
+	            // so that the only NO-OP crossover possible is point == point0
+	            // example; len = 4
+	            // possibilities: a=0 b=0       NOP                             [0123]
+	            //                                a=0 b=1       swap 0                  [for 1, 2, 3]
+	            //                                a=0 b=2       swap 0, 1               [for 2, 3]
+	            //                                a=0 b=3       swap 0, 1, 2    [for 3]
+	            //                                a=1 b=1       NOP                             [1230]
+	            //                                a=1 b=2       swap 1                  [for 2, 3, 0]
+	            //                                a=1 b=3       swap 1, 2               [for 3, 0]
+	            //                                a=2 b=2       NOP                             [2301]
+	            //                                a=2 b=3       swap 2                  [for 3, 0, 1]
+	            //                                a=3 b=3   NOP                         [3012]
+	            // All intervals: 0, 01, 012, 0123, 1, 12, 123, 1230, 2, 23, 230, 2301, 3, 30, 301, 3012
+	            point = state.random[thread].nextInt((len / s.chunksize));
+	            int point0 = state.random[thread].nextInt((len / s.chunksize));
+	            if (point0 > point) { int p = point0; point0 = point; point = p; }
+	            for(int x=point0*s.chunksize;x<point*s.chunksize;x++)
+	                {
+	                tmp = i.genome[x];
+	                i.genome[x] = genome[x];
+	                genome[x] = tmp;
+	                }
+	            }
+	            break;
+	            case VectorSpecies.C_TWO_POINT_NO_NOP: 
+	            {
+	            point = state.random[thread].nextInt((len / s.chunksize));
+	            int point0 = 0;
+	            do { point0 = state.random[thread].nextInt((len / s.chunksize)); }
+	            while (point0 == point);  // NOP
+	            if (point0 > point) { int p = point0; point0 = point; point = p; }
+	            for(int x=point0*s.chunksize;x<point*s.chunksize;x++)
+	                {
+	                tmp = i.genome[x];
+	                i.genome[x] = genome[x];
+	                genome[x] = tmp;
+	                }
+	            }
+	            break;
+	            case VectorSpecies.C_ANY_POINT:
+	                for(int x=0;x<len/s.chunksize;x++) 
+	                    if (state.random[thread].nextBoolean(s.crossoverProbability))
+	                        for(int y=x*s.chunksize;y<(x+1)*s.chunksize;y++)
+	                            {
+	                            tmp = i.genome[y];
+	                            i.genome[y] = genome[y];
+	                            genome[y] = tmp;
+	                            }
+	                break;
+	            }
+        } else
+        	customCrossover(state, thread, ind);
         }
-
+    
+    public void customCrossover(EvolutionState state, int thread, VectorIndividual ind1){
+    	GeneVectorSpecies spe = (GeneVectorSpecies) species;
+        GeneVectorIndividual ind2 = (GeneVectorIndividual) ind1;
+		
+		int cantidadLineas = spe.getCantidadLineas();
+		int parada, iter, cantidadParadas;
+		boolean encontre;
+		
+		for(int i = 0; i < cantidadLineas; i++){
+			parada = 0;
+			BusStop busStop1 = null;
+			BusStop busStop2 = null;
+			
+			encontre = false;
+			iter = 0;
+			
+			//obtengo la info de las lineas de ambos individuos a cruzar
+			BusProblemLine linea1 = (BusProblemLine)genome[i];
+			BusProblemLine linea2 = (BusProblemLine)ind2.genome[i];
+			
+			List<BusStop> paradas = linea1.getParadas();
+			cantidadParadas = paradas.size();
+			
+			while(!encontre && iter < cantidadParadas){
+				parada = linea1.getStop(iter).getParada();
+				busStop2 = linea2.checkBusStopInLine(parada);
+				
+				if (busStop2 != null){
+					encontre = true;
+					busStop1 = linea1.getStop(parada);
+				}
+				
+				iter++;
+			}
+			
+			if(encontre){
+				/* Se suman las cantidades de las personas que suben y bajan en esa	*/
+				/* parada para la linea y se agregan a la parada del individuo 1	*/
+				
+				if (linea1.getAsientosDisponibles() >= busStop2.getSuben() - busStop2.getBajan()){
+					/* hay lugar en la linea, actualizo la parada */
+					busStop1.setSuben(busStop1.getSuben() + busStop2.getSuben());
+					busStop1.setBajan(busStop1.getBajan() + busStop2.getBajan());
+					linea1.setAsientosDisponibles(linea1.getAsientosDisponibles() - busStop2.getSuben() + busStop2.getBajan());
+				}
+			}
+			
+		}
+    }
+    
     /** Splits the genome into n pieces, according to points, which *must* be sorted. 
         pieces.length must be 1 + points.length */
     public void split(int[] points, Object[] pieces)

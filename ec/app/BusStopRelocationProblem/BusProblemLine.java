@@ -61,7 +61,7 @@ public class BusProblemLine extends Gene{
 	public void agregarParada(BusStop stop){
 		paradas.add(stop);
 	}
-	
+    
 	public void nuevaParada(int parada, int desplazamiento){
 		/* La funcion toma gente que sube/baja de las paradas siguiente y anterior 	 */
 		/* de la nueva parada a agregar, y las distribuye entre la nueva y estas dos */
@@ -99,9 +99,9 @@ public class BusProblemLine extends Gene{
 	}
 	
 	
-	/*public int getPseudoRandomStop(){
-		return paradas.get(mt.nextInt(paradas.size()-1)).getParada();
-	}*/
+	public BusStop getStop(int nroParada){
+		return paradas.get(nroParada);
+	}
 	
 	public BusStop checkBusStopInLine(int nro_parada){
 		Iterator<BusStop> it = paradas.listIterator();
