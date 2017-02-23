@@ -7,6 +7,8 @@
 
 package ec.simple;
 import ec.*;
+import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
+import ec.app.BusStopRelocationProblem.utils.Parametros;
 import ec.steadystate.*;
 import java.io.IOException;
 import ec.util.*;
@@ -175,7 +177,6 @@ public class SimpleStatistics extends Statistics implements SteadyStateStatistic
     public void finalStatistics(final EvolutionState state, final int result)
         {
         super.finalStatistics(state,result);
-        
         // for now we just print the best fitness 
         
         if (doFinal) state.output.println("\nBest Individual of Run:",statisticslog);
@@ -189,36 +190,19 @@ public class SimpleStatistics extends Statistics implements SteadyStateStatistic
             if (doFinal && doDescription) 
                 if (state.evaluator.p_problem instanceof SimpleProblemForm)
                     ((SimpleProblemForm)(state.evaluator.p_problem.clone())).describe(state, best_of_run[x], x, 0, statisticslog);      
-
-            //Genero el archivo CSV con la asignación de colores
-            /*try{
-                File fout = new File("asignacion_colores.csv");
-                FileOutputStream fos = new FileOutputStream(fout);
-                
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-                
-                IntegerVectorIndividual ind = (IntegerVectorIndividual) best_of_run[x];
-                for (int i=0; i<ind.genome.length;i++){
-                    bw.write(i+1+","+ind.genome[i]);
-                    bw.newLine();
-                }
-                bw.close();
-            }
-            catch (IOException e){
-                System.out.println("Error al escribir el csv con la asignacion de colores.");
-            }*/
             
             /* Genero archivo con ls solucion */
-            /* TODO: version inicial que imprime el valor nada mas */
             try {
-            	File fout = new File("solucion.out");
+            	DebugFileLog.DebugFileLog("simpleStatistics", "entro");
+            	DebugFileLog.DebugFileLog("simpleStatistics", "el path es " + Parametros.getWorkingPath() + "solucion.out");
+            	File fout = new File(Parametros.getWorkingPath() + "solucion.out");
                 FileOutputStream fos = new FileOutputStream(fout);
-                
+                DebugFileLog.DebugFileLog("simpleStatistics", "Voy a escribir la salida");
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
                 
-                IntegerVectorIndividual ind = (IntegerVectorIndividual) best_of_run[x];
+                GeneVectorIndividual ind = (GeneVectorIndividual) best_of_run[x];
                 for (int i= 0; i < ind.genome.length;i++){
-                    bw.write(i+1+","+ind.genome[i]);
+                    bw.write(i + "," + ind.genome[i].toString());
                     bw.newLine();
                 }
                 

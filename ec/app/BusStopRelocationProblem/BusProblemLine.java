@@ -185,8 +185,10 @@ public class BusProblemLine extends Gene{
 	private void mutateElegirAccion(EvolutionState state, int thread) {
 		//obtenemos que parada modificar y si se queda donde esta, se saca o se modifica (sin ser la primera y ultima)
 		int parada_mutar = 0;
-		while (parada_mutar == 0)	
+		
+		while (parada_mutar == 0){
 			parada_mutar = mt.nextInt(paradas.size());
+		}
 		
 		BusProblemInformation info = BusProblemInformation.getBusProblemInformation();
 		int distanciaMaxima = info.getNuevaDistanciaMaxima(); 
@@ -226,6 +228,10 @@ public class BusProblemLine extends Gene{
 		boolean existeCombinacion = false;
 		int posicion = 0, indice = 0;
 		
+		//avanzo una vez, para no eliminar la primera
+		if (iter.hasNext())
+			iter.next();
+		
 		while (!existeCombinacion && iter.hasNext()){
 			stop1 = iter.next();
 			
@@ -234,7 +240,10 @@ public class BusProblemLine extends Gene{
 				if (stop2.getSuben() == 0){
 					/* CONSECUTIVAS. Corto la busqueda */
 					posicion = indice;
-					existeCombinacion = true;
+					
+					//chequeo que no sea la ultima
+					if (iter.hasNext())
+						existeCombinacion = true;
 				}
 			}
 			

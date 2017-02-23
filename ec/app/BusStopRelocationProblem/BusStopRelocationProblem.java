@@ -44,7 +44,7 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 		  	  	int boardTime = t_spe.getBoardTime();
 		  	  	int alightTime = t_spe.getAlightTime();
 		  	  	int walkingSpeed = t_spe.getWalkingSpeed();
-
+		  	  	
 		  	  	for (int i = 0; i < cantidadLineas; i++) {
 		  	  		/* Para cada linea recorro sus paradas */
 		  	  		busLine = (BusProblemLine)ind2.genome[i];
@@ -78,7 +78,7 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 		  	  	}
 		  	  	
 		        objectives[0] = (-1)*fitness1;
-		        objectives[0] = fitness2;
+		        objectives[1] = fitness2;
 		        
 		        ((MultiObjectiveFitness)ind.fitness).setObjectives(state, objectives);
 		        ind.evaluated = true;

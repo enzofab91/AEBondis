@@ -40,6 +40,12 @@ public class BusProblemInformation {
 	/* bajan en esa parada para esa línea.																		*/
 	private SDTSubenBajan[][] MatrizDemanda;
 	
+	/* Una lista de codigos variantes, cada uno de ellos tiene una matriz con los valores 		*/
+	/* (bus_stop1,bus_stop2) -> tiempo que le lleva recorrerlo. Este tiempo se calcula como 	*/
+	/* tiempo = distancia (en metros) / velocidad (en metros/segundo). Como son datos que no	*/
+	/* cambian en el problema, se precalculan para que luego el algoritmo sea mas rapido		*/
+	//private Map<Integer,>
+	
 	/* Un mapeo entre la parada (clave) y sus coordenadas en latitud y longitud (valor) */
 	private Map<Integer, SDTCoordenadas> coordenadas = new HashMap<Integer, SDTCoordenadas>();
 	

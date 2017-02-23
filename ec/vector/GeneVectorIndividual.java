@@ -14,6 +14,7 @@ import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
 import ec.app.BusStopRelocationProblem.utils.Parametros;
 import ec.util.*;
 import java.io.*;
+import java.util.LinkedList;
 import java.util.List;
 
 /*
@@ -79,6 +80,7 @@ public class GeneVectorIndividual extends VectorIndividual
     {
     public static final String P_GENEVECTORINDIVIDUAL = "gene-vect-ind";
     public Gene[] genome;
+    MersenneTwister mt = new MersenneTwister();
     
     public Parameter defaultBase()
         {
@@ -210,7 +212,8 @@ public class GeneVectorIndividual extends VectorIndividual
 	                break;
 	            }
         } else
-        	customCrossover(state, thread, ind);
+        	//customCrossover(state, thread, ind);
+        	customSPCrossoverParadas(state, thread, ind);
         }
     
     public void customCrossover(EvolutionState state, int thread, VectorIndividual ind1){
@@ -260,6 +263,53 @@ public class GeneVectorIndividual extends VectorIndividual
 				}
 			}
 			
+		}
+    }
+    
+    public void customSPCrossoverParadas(EvolutionState state, int thread, VectorIndividual ind1){
+    	GeneVectorSpecies spe = (GeneVectorSpecies) species;
+        GeneVectorIndividual ind2 = (GeneVectorIndividual) ind1;
+		
+		int cantidadLineas = spe.getCantidadLineas();
+		int cantidadParadas, puntoCorte;
+		
+		for(int i = 0; i < cantidadLineas; i++){
+			//obtengo la info de la linea a cruzar, y el punto de corte al azar
+			BusProblemLine linea1 = (BusProblemLine)genome[i];
+			BusProblemLine linea2 = (BusProblemLine)ind2.genome[i];
+			
+			List<BusStop> paradas1 = linea1.getParadas();
+			List<BusStop> paradas2 = linea2.getParadas();
+
+			cantidadParadas = paradas1.size();
+			
+			List<BusStop> nuevasParadasLinea1 = new LinkedList<BusStop>();
+			List<BusStop> nuevasParadasLinea2 = new LinkedList<BusStop>();
+			
+			puntoCorte = mt.nextInt(cantidadParadas);
+			
+			// me aseguro que la linea 2 tenga al menos esa cantidad de paradas
+			if (puntoCorte < paradas2.size()){
+				// obtengo las paradas hasta el punto de corte primero,
+				// y luego completo el resto de las paradas de cada solucion
+				for (int iter = 0; iter <= puntoCorte; iter++){
+					nuevasParadasLinea1.add(paradas2.get(iter));
+					nuevasParadasLinea2.add(paradas1.get(iter));
+				}
+				
+				// completo con las paradas de la solucion 1 luego del corte
+				for (int iter = puntoCorte + 1; iter < paradas1.size(); iter++){
+					nuevasParadasLinea1.add(paradas1.get(iter));
+				}
+				
+				// completo con las paradas de la solucion 2 luego del corte
+				for (int iter = puntoCorte + 1; iter < paradas2.size(); iter++){
+					nuevasParadasLinea2.add(paradas2.get(iter));
+				}
+				
+				linea1.setParadas(nuevasParadasLinea1);
+				linea2.setParadas(nuevasParadasLinea2);
+			}
 		}
     }
     
