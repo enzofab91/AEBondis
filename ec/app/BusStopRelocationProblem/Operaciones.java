@@ -1,5 +1,8 @@
 package ec.app.BusStopRelocationProblem;
 
+import java.util.List;
+
+import ec.app.BusStopRelocationProblem.SDTs.SDTDistancias;
 import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
 
 public class Operaciones {
@@ -20,6 +23,59 @@ public class Operaciones {
 	    
 	    //se devuelven metros
 	    return distancia;
+	}
+	
+	public static double obtenerDistancia(List<SDTDistancias> distancias, BusStop parada_1, BusStop parada_2){
+		double distancia = 0;
+		
+		if ((parada_1.getParada() >= 10000) || (parada_2.getParada() >= 10000)){
+			/* son paradas nuevas, por lo que no hay datos, se calcula con la distancia haversine */
+			distancia = calcularDistancia(parada_1.getLatitud(),parada_1.getLongitud(),
+					parada_2.getLatitud(),parada_2.getLongitud());
+		} else {
+			int cantParadas = distancias.size();
+			int iter = 0;
+			boolean encontre = false;
+			
+			SDTDistancias parada;
+			while ((iter < cantParadas) && !encontre){
+				parada = distancias.get(iter);
+				if ((parada.getParada1() == parada_1.getParada()) || 
+					(parada.getParada2() == parada_2.getParada())){
+					distancia = parada.getDistancia();
+					encontre = true;
+				}
+				iter++;
+			}
+		}
+		
+		return distancia;
+	}
+	
+	public static double obtenerVelocidad(List<SDTDistancias> distancias, BusStop parada_1, BusStop parada_2){
+		double velocidad = 0;
+		
+		if ((parada_1.getParada() >= 10000) || (parada_2.getParada() >= 10000)){
+			/* son paradas nuevas, por lo que no hay datos, se calcula con la distancia haversine */
+			velocidad = 5;
+		} else {
+			int cantParadas = distancias.size();
+			int iter = 0;
+			boolean encontre = false;
+			
+			SDTDistancias parada;
+			while ((iter < cantParadas) && !encontre){
+				parada = distancias.get(iter);
+				if ((parada.getParada1() == parada_1.getParada()) || 
+					(parada.getParada2() == parada_2.getParada())){
+					velocidad = parada.getVelocidad();
+					encontre = true;
+				}
+				iter++;
+			}
+		}
+		
+		return velocidad;
 	}
 	
 	public static double[] puntoMedio(double lat1,double lon1,double lat2,double lon2){

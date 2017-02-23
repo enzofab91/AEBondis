@@ -19,6 +19,7 @@ import java.util.Map;
 import ec.*;
 import ec.app.BusStopRelocationProblem.BusProblemInformation;
 import ec.app.BusStopRelocationProblem.SDTs.SDTCoordenadas;
+import ec.app.BusStopRelocationProblem.SDTs.SDTDistancias;
 import ec.app.BusStopRelocationProblem.SDTs.SDTSubenBajan;
 import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
 import ec.app.BusStopRelocationProblem.utils.Parametros;
@@ -82,6 +83,12 @@ public class GeneVectorSpecies extends VectorSpecies
 	/* bajan en esa parada para esa línea.																		*/
 	private SDTSubenBajan[][] MatrizDemanda;
 	
+	/* Una lista de codigos variantes, cada uno de ellos tiene una matriz con los valores 		*/
+	/* (bus_stop1,bus_stop2) -> tiempo que le lleva recorrerlo. Este tiempo se calcula como 	*/
+	/* tiempo = distancia (en metros) / velocidad (en metros/segundo). Como son datos que no	*/
+	/* cambian en el problema, se precalculan para que luego el algoritmo sea mas rapido		*/
+	private Map<Integer, List<SDTDistancias>> tiempos = new HashMap<Integer, List<SDTDistancias>>();
+	
 	/* Un mapeo entre la parada (clave) y sus coordenadas en latitud y longitud (valor) */
 	private Map<Integer, SDTCoordenadas> coordenadas = new HashMap<Integer, SDTCoordenadas>();
 	
@@ -127,6 +134,10 @@ public class GeneVectorSpecies extends VectorSpecies
     public SDTSubenBajan[][] getMatrizDemanda() {
 		return this.MatrizDemanda;
 	}
+    
+    public Map<Integer, List<SDTDistancias>> getTiempos(){
+    	return this.tiempos;
+    }
     
     public Map<Integer, List<Integer>> getOrdenParadas() {
 		return this.ordenParadas;
@@ -190,7 +201,17 @@ public class GeneVectorSpecies extends VectorSpecies
   		  			writer.println(it2.next());
 
   		  		writer.println();
-  		  		writer.close();      		      
+  		  		writer.close();  
+  		  		
+  		  		/* Imprime tiempos de recorrido */ 
+  		  		writer = new PrintWriter(filesPath + "debug/debug_" + Integer.toString(pair.getKey()) + "_tiempos", "UTF-8");
+  		  		Iterator<SDTDistancias> it3 = this.tiempos.get(pair.getKey()).iterator();
+  		      
+  		  		while(it3.hasNext())
+  		  			writer.println(it3.next().toString());
+
+  		  		writer.println();
+  		  		writer.close(); 
   		  	}
 
   		  	writer = new PrintWriter(filesPath + "debug/debug_coordenadas", "UTF-8");
@@ -229,6 +250,7 @@ public class GeneVectorSpecies extends VectorSpecies
 	    this.correlacion = information.getCorrelacion();
 	    this.ordenParadas = information.getOrdenParadas();
         this.coordenadas = information.getCoordenadas();
+        this.tiempos = information.getTiempos();
         
         /* Imprimo el problema para ver que todo fue cargado correctamente */
         //printProblem();

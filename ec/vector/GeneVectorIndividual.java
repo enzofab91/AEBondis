@@ -307,6 +307,7 @@ public class GeneVectorIndividual extends VectorIndividual
 					nuevasParadasLinea2.add(paradas2.get(iter));
 				}
 				
+				//TODO: corregir que las paradas no se pasen de la capacidad
 				linea1.setParadas(nuevasParadasLinea1);
 				linea2.setParadas(nuevasParadasLinea2);
 			}

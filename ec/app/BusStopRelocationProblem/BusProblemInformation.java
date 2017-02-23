@@ -3,12 +3,14 @@ package ec.app.BusStopRelocationProblem;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import ec.app.BusStopRelocationProblem.SDTs.SDTCoordenadas;
+import ec.app.BusStopRelocationProblem.SDTs.SDTDistancias;
 import ec.app.BusStopRelocationProblem.SDTs.SDTSubenBajan;
 import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
 import ec.app.BusStopRelocationProblem.utils.Parametros;
@@ -44,7 +46,7 @@ public class BusProblemInformation {
 	/* (bus_stop1,bus_stop2) -> tiempo que le lleva recorrerlo. Este tiempo se calcula como 	*/
 	/* tiempo = distancia (en metros) / velocidad (en metros/segundo). Como son datos que no	*/
 	/* cambian en el problema, se precalculan para que luego el algoritmo sea mas rapido		*/
-	//private Map<Integer,>
+	private Map<Integer, List<SDTDistancias>> tiempos = new HashMap<Integer, List<SDTDistancias>>();
 	
 	/* Un mapeo entre la parada (clave) y sus coordenadas en latitud y longitud (valor) */
 	private Map<Integer, SDTCoordenadas> coordenadas = new HashMap<Integer, SDTCoordenadas>();
@@ -102,6 +104,10 @@ public class BusProblemInformation {
     public SDTSubenBajan[][] getMatrizDemanda() {
 		return this.MatrizDemanda;
 	}
+    
+    public Map<Integer, List<SDTDistancias>> getTiempos(){
+    	return this.tiempos;
+    }
     
     public Map<Integer, List<Integer>> getOrdenParadas() {
 		return this.ordenParadas;
@@ -184,6 +190,24 @@ public class BusProblemInformation {
        	        
        	        pasajeros.close();
        	    	
+       	        BufferedReader distancias = new BufferedReader(new FileReader(filesPath + lineas[i]+ "_distancias"));
+       	        line = distancias.readLine();
+       	        
+       	        double tiempo = 0;
+       	        List<SDTDistancias> tiempoLinea = new ArrayList<SDTDistancias>();
+       	        
+	 	        while (line != null) {
+	 	        	String[] informacion = line.split(",");
+	 	        	
+	 	        	tiempoLinea.add(new SDTDistancias(Integer.parseInt(informacion[1]), Integer.parseInt(informacion[2]),
+	 	        			Double.parseDouble(informacion[3]), Double.parseDouble(informacion[4])));
+	 	        	
+	 	            line = distancias.readLine();
+	 	        }
+	 	        
+	 	       this.tiempos.put(Integer.parseInt(lineas[i]),tiempoLinea);
+ 	        
+	 	        distancias.close();
        	    }
        	    br.close();
        	    

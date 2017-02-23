@@ -1,11 +1,14 @@
 package ec.app.BusStopRelocationProblem;
 
 import java.util.List;
+import java.util.Map;
 
 import ec.EvolutionState;
 import ec.Individual;
 import ec.Problem;
+import ec.app.BusStopRelocationProblem.SDTs.SDTDistancias;
 import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
+import ec.app.BusStopRelocationProblem.utils.Parametros;
 import ec.multiobjective.MultiObjectiveFitness;
 import ec.simple.SimpleProblemForm;
 import ec.vector.GeneVectorIndividual;
@@ -39,17 +42,21 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 		  	  	int gananciaPorViaje = t_spe.getGananciaPorViaje(); 
 		  	  	int costoCombustible = t_spe.getCostoCombustible();
 		  	  	int costoSalario = t_spe.getCostoSalario();
-		  	  	
+
 		  	  	int stopTime = t_spe.getStopTime(); 
 		  	  	int boardTime = t_spe.getBoardTime();
 		  	  	int alightTime = t_spe.getAlightTime();
 		  	  	int walkingSpeed = t_spe.getWalkingSpeed();
 		  	  	
+		  	  	String tipo_distancia = Parametros.getParameterString("Distancias");
+		  	  	
+		  	  	double distancia, tiempoEntreParadas, velocidad;
 		  	  	for (int i = 0; i < cantidadLineas; i++) {
 		  	  		/* Para cada linea recorro sus paradas */
 		  	  		busLine = (BusProblemLine)ind2.genome[i];
 		  	  		
 		  	  		List<BusStop> paradas = busLine.getParadas();
+		  	  		List<SDTDistancias> distancias = t_spe.getTiempos().get(busLine.getLine());
 		  	  		
 		  	  		for (int j = 0; j < paradas.size()-1 ; j++){
 			  			/* Me aseguro que la parada existe */
@@ -59,11 +66,17 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 			  			while(t < paradas.size() && paradas.get(t).getEstado() != EstadoParada.ELIMINADA){
 			  				j_esimaParada = paradas.get(j);
 			  				
-			  				double distancia = Operaciones.calcularDistancia(j_esimaParada.getLatitud(),paradas.get(j).getLongitud(),
-			  						j_esimaParada.getLatitud(),paradas.get(t).getLongitud());
-			  				
-			  				double tiempoEntreParadas = Operaciones.calcularDistancia(j_esimaParada.getLatitud(),j_esimaParada.getLongitud(),
-			  						j_esimaParada.getLatitud(),j_esimaParada.getLongitud());
+			  				if (tipo_distancia.equals("Haversine")){
+				  				distancia = Operaciones.calcularDistancia(paradas.get(j).getLatitud(),paradas.get(j).getLongitud(),
+				  						j_esimaParada.getLatitud(),j_esimaParada.getLongitud());
+				  				
+				  				 tiempoEntreParadas = distancia;
+			  				} else {
+			  					distancia = Operaciones.obtenerDistancia(distancias, paradas.get(j), j_esimaParada);
+			  					velocidad = Operaciones.obtenerVelocidad(distancias, paradas.get(j), j_esimaParada);
+			  					
+			  					tiempoEntreParadas = distancia * velocidad;
+			  				}
 			  				
 			  				// Fitness1: minimizar el tiempo de recorrido
 			  				fitness1 += stopTime + (j_esimaParada.getSuben() * boardTime) + tiempoEntreParadas;
