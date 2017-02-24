@@ -193,14 +193,15 @@ public class BusProblemInformation {
        	        BufferedReader distancias = new BufferedReader(new FileReader(filesPath + lineas[i]+ "_distancias"));
        	        line = distancias.readLine();
        	        
+       	        //DebugFileLog.DebugFileLog("pruebaDistancias", "Voy a leer distancias!");
        	        double tiempo = 0;
        	        List<SDTDistancias> tiempoLinea = new ArrayList<SDTDistancias>();
        	        
 	 	        while (line != null) {
 	 	        	String[] informacion = line.split(",");
-	 	        	
-	 	        	tiempoLinea.add(new SDTDistancias(Integer.parseInt(informacion[1]), Integer.parseInt(informacion[2]),
-	 	        			Double.parseDouble(informacion[3]), Double.parseDouble(informacion[4])));
+	 	        	//DebugFileLog.DebugFileLog("pruebaDistancias", "linea = " + line);
+	 	        	tiempoLinea.add(new SDTDistancias(Integer.parseInt(informacion[0]), Integer.parseInt(informacion[1]),
+	 	        			Double.parseDouble(informacion[2]), Double.parseDouble(informacion[3])));
 	 	        	
 	 	            line = distancias.readLine();
 	 	        }

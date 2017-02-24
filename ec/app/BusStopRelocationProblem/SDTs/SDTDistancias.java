@@ -28,4 +28,9 @@ public class SDTDistancias {
 	public double getVelocidad() {
 		return velocidad;
 	}
+	
+	@Override
+	public String toString(){
+		return "{Parada 1: " + parada_1 + ",Parada 2: " + parada_2 + ",Distancia: " + distancia + ",Velocidad: " + velocidad + "}";
+	}
 }
