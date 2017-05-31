@@ -4,6 +4,7 @@ import java.util.List;
 
 import ec.app.BusStopRelocationProblem.SDTs.SDTDistancias;
 import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
+import ec.app.BusStopRelocationProblem.utils.Parametros;
 
 public class Operaciones {
 	public static double calcularDistancia(double lat1, double lon1, double lat2, double lon2){
@@ -56,8 +57,8 @@ public class Operaciones {
 		double velocidad = 0;
 		
 		if ((parada_1.getParada() >= 10000) || (parada_2.getParada() >= 10000)){
-			/* son paradas nuevas, por lo que no hay datos, se calcula con la distancia haversine */
-			velocidad = 5;
+			/* son paradas nuevas, por lo que no hay datos, se toma una promedio */
+			velocidad = (double)Parametros.getParameterInt("VelocidadPromedio") / 3.6; //se divide para pasar de km/h a m/s
 		} else {
 			int cantParadas = distancias.size();
 			int iter = 0;

@@ -10,6 +10,7 @@ package ec.vector;
 import ec.*;
 import ec.app.BusStopRelocationProblem.BusProblemLine;
 import ec.app.BusStopRelocationProblem.BusStop;
+import ec.app.BusStopRelocationProblem.EstadoParada;
 import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
 import ec.app.BusStopRelocationProblem.utils.Parametros;
 import ec.util.*;
@@ -307,11 +308,33 @@ public class GeneVectorIndividual extends VectorIndividual
 					nuevasParadasLinea2.add(paradas2.get(iter));
 				}
 				
-				//TODO: corregir que las paradas no se pasen de la capacidad
-				linea1.setParadas(nuevasParadasLinea1);
-				linea2.setParadas(nuevasParadasLinea2);
+				//chequeo que no exceda la capacidad maxima con el cruzamiento
+				if (chequearCapacidad(linea1) && chequearCapacidad(linea2)){
+					linea1.setParadas(nuevasParadasLinea1);
+					linea2.setParadas(nuevasParadasLinea2);
+				}
 			}
 		}
+    }
+    
+    private boolean chequearCapacidad(BusProblemLine linea){
+    	boolean lineaValida = false;
+    	
+    	int capacidadMaxima = Parametros.getParameterInt("CantidadMaximaPasajeros");
+    	List<BusStop> paradas = linea.getParadas();
+    	
+    	int capacidadActual = 0;
+    	for (int i = 0; i < paradas.size()-1 ; i++){
+    		if (paradas.get(i).getEstado() != EstadoParada.ELIMINADA){
+    			capacidadActual -= paradas.get(i).getBajan();
+    			capacidadActual += paradas.get(i).getSuben();
+    		}
+    	}
+    	
+    	if (capacidadActual <= capacidadMaxima)
+    		lineaValida = true;
+    	
+    	return lineaValida;
     }
     
     /** Splits the genome into n pieces, according to points, which *must* be sorted. 

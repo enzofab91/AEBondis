@@ -227,17 +227,13 @@ public class BusProblemLine extends Gene{
 		
 		boolean existeCombinacion = false;
 		int posicion = 0, indice = 0;
-		
-		//avanzo una vez, para no eliminar la primera
-		if (iter.hasNext())
-			iter.next();
-		
+
 		while (!existeCombinacion && iter.hasNext()){
 			stop1 = iter.next();
 			
-			if (stop1.getSuben() == 0){
+			if ((stop1.getEstado() != EstadoParada.ELIMINADA) && (stop1.getSuben() == 0)){
 				stop2 = iter.next();
-				if (stop2.getSuben() == 0){
+				if ((stop2.getEstado() != EstadoParada.ELIMINADA) && (stop2.getSuben() == 0)){
 					/* CONSECUTIVAS. Corto la busqueda */
 					posicion = indice;
 					
@@ -257,20 +253,30 @@ public class BusProblemLine extends Gene{
 			/* un par cualquiera del medio, ahi si se quitan y se agrega la del punto medio			 */
 			
 			if (posicion == 0){
-				quitarParada(0);
-			} else if (posicion == paradas.size() - 1){
+				quitarParada(1);
+			} else if (posicion == paradas.size() - 2){
 				quitarParada(paradas.size() - 1);
 			} else {
 				double coordinates[] = Operaciones.puntoMedio(stop1.getLatitud(), stop1.getLongitud(), stop2.getLatitud(), stop2.getLongitud());
 				double latitud = coordinates[0], longitud = coordinates[1];
 				
 				BusStop nuevaParada = new BusStop(0,stop1.getBajan()+stop2.getBajan(),BusStop.getNuevoIdentificador(),latitud,longitud,EstadoParada.NUEVA,0);
-				agregarParada(nuevaParada);
+				agregarParadaPosicion(nuevaParada, posicion);
 			}
 			
 		}
 		
 	}
+	
+	private void agregarParadaPosicion(BusStop nuevaParada, int posicion){
+		//remueve las dos paradas de la posicion y la siguiente
+		paradas.remove(posicion + 1);
+		paradas.remove(posicion);
+		
+		//agrega la nueva parada
+		paradas.add(posicion, nuevaParada);
+	}
+	
 	/* FIN DE MUTACION DE BUS STOP RELOCATION PROBLEM */
 	
 	public int hashCode() {
