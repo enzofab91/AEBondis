@@ -51,45 +51,71 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 		  	  	String tipo_distancia = Parametros.getParameterString("Distancias");
 		  	  	
 		  	  	double distancia, tiempoEntreParadas, velocidad;
+		  	  	double dist_a_nueva_parada = 0;
+		  	  	
 		  	  	for (int i = 0; i < cantidadLineas; i++) {
 		  	  		/* Para cada linea recorro sus paradas */
 		  	  		busLine = (BusProblemLine)ind2.genome[i];
 		  	  		
 		  	  		List<BusStop> paradas = busLine.getParadas();
 		  	  		List<SDTDistancias> distancias = t_spe.getTiempos().get(busLine.getLine());
+		  	  		BusStop parada_anterior = null;
 		  	  		
 		  	  		for (int j = 0; j < paradas.size()-1 ; j++){
 			  			/* Me aseguro que la parada existe */
-			  			/* Busco la siguiente parada */
-			  			int t = j + 1;
-			  			BusStop j_esimaParada;
-			  			while(t < paradas.size() && paradas.get(t).getEstado() != EstadoParada.ELIMINADA){
-			  				j_esimaParada = paradas.get(j);
+		  	  			if (paradas.get(j).getEstado() != EstadoParada.ELIMINADA){
+				  			/* Busco la siguiente parada que no este eliminada */
+				  			int t = j + 1;
+				  			BusStop j_esimaParada, t_esimaParada;
+				  			while(t < paradas.size() && paradas.get(t).getEstado() == EstadoParada.ELIMINADA){
+				  				t++;
+				  			}
+			  				
+				  			j_esimaParada = paradas.get(j);
+			  				t_esimaParada = paradas.get(t);
 			  				
 			  				if (tipo_distancia.equals("Haversine")){
-				  				distancia = Operaciones.calcularDistancia(paradas.get(j).getLatitud(),paradas.get(j).getLongitud(),
-				  						j_esimaParada.getLatitud(),j_esimaParada.getLongitud());
+				  				distancia = Operaciones.calcularDistancia(j_esimaParada.getLatitud(),j_esimaParada.getLongitud(),
+				  						t_esimaParada.getLatitud(),t_esimaParada.getLongitud());
 				  				
 				  				//La velocidad esta en km/h, se divide para pasar a m/s
 				  				velocidad = (double)Parametros.getParameterInt("VelocidadPromedio") / 3.6;
 				  				tiempoEntreParadas = distancia / velocidad;
 			  				} else {
-			  					distancia = Operaciones.obtenerDistancia(distancias, paradas.get(j), j_esimaParada);
-			  					velocidad = Operaciones.obtenerVelocidad(distancias, paradas.get(j), j_esimaParada);
+			  					distancia = Operaciones.obtenerDistancia(distancias, j_esimaParada, t_esimaParada);
+			  					velocidad = Operaciones.obtenerVelocidad(distancias, j_esimaParada, t_esimaParada);
 			  					
 			  					tiempoEntreParadas = distancia / velocidad;
 			  				}
 			  				
+			  				//como la parada origen no se modifica, la primera vez no va a entrar aca.
+			  				//la siguiente vez ya esta inicializada la parada anterior
+			  				if (j_esimaParada.getParada() >= 10000){
+			  					//es nueva, por lo tanto calculo la distancia a la mas cercana
+			  					//no se puede usar la distancia real porque es nueva y no existe
+		  						double dist_peaton_sig = Operaciones.calcularDistancia(j_esimaParada.getLatitud(), j_esimaParada.getLongitud(),
+		  								t_esimaParada.getLatitud(), t_esimaParada.getLongitud());
+		  						
+		  						double dist_peaton_ant = Operaciones.calcularDistancia(parada_anterior.getLatitud(), parada_anterior.getLongitud(),
+		  								j_esimaParada.getLatitud(), j_esimaParada.getLongitud());
+		  						
+		  						if (dist_peaton_ant > dist_peaton_sig)
+		  							dist_a_nueva_parada = dist_peaton_ant;
+		  						else
+		  							dist_a_nueva_parada = dist_peaton_sig;
+			  				}
+				  			
+			  				parada_anterior = j_esimaParada;
+			  				
 			  				// Fitness1: minimizar el tiempo de recorrido
 			  				fitness1 += stopTime + (j_esimaParada.getSuben() * boardTime) + 
-			  						(alightTime * j_esimaParada.getBajan()) + tiempoEntreParadas;
+			  						(alightTime * j_esimaParada.getBajan()) + tiempoEntreParadas +
+			  						(walkingSpeed * dist_a_nueva_parada);
 			  				
 			  				// Fitness 2: maximizar la ganancia de la empresa (ganancia - costos)
 			  				fitness2 += (j_esimaParada.getSuben() * gananciaPorViaje) - 
 			  						(costoCombustible + costoSalario) * distancia;
-			  				
-			  				t++;
-			  			}
+		  	  			}
 		  	  		}
 		  	  	}
 		  	  	

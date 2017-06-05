@@ -1,6 +1,7 @@
 package ec.app.BusStopRelocationProblem;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -190,25 +191,29 @@ public class BusProblemInformation {
        	        
        	        pasajeros.close();
        	    	
-       	        BufferedReader distancias = new BufferedReader(new FileReader(filesPath + lineas[i]+ "_distancias"));
-       	        line = distancias.readLine();
-       	        
-       	        //DebugFileLog.DebugFileLog("pruebaDistancias", "Voy a leer distancias!");
-       	        double tiempo = 0;
-       	        List<SDTDistancias> tiempoLinea = new ArrayList<SDTDistancias>();
-       	        
-	 	        while (line != null) {
-	 	        	String[] informacion = line.split(",");
-	 	        	//DebugFileLog.DebugFileLog("pruebaDistancias", "linea = " + line);
-	 	        	tiempoLinea.add(new SDTDistancias(Integer.parseInt(informacion[0]), Integer.parseInt(informacion[1]),
-	 	        			Double.parseDouble(informacion[2]), Double.parseDouble(informacion[3])));
-	 	        	
-	 	            line = distancias.readLine();
-	 	        }
+       	        //si el parametro es Haversine no utiliza archivos de distancias
+       	        File existe_distancias = new File(filesPath + lineas[i]+ "_distancias");
+       	        if (existe_distancias.exists()){
+	       	        BufferedReader distancias = new BufferedReader(new FileReader(filesPath + lineas[i]+ "_distancias"));
+	       	        line = distancias.readLine();
+	       	        
+	       	        //DebugFileLog.DebugFileLog("pruebaDistancias", "Voy a leer distancias!");
+	       	        double tiempo = 0;
+	       	        List<SDTDistancias> tiempoLinea = new ArrayList<SDTDistancias>();
+	       	        
+		 	        while (line != null) {
+		 	        	String[] informacion = line.split(",");
+		 	        	//DebugFileLog.DebugFileLog("pruebaDistancias", "linea = " + line);
+		 	        	tiempoLinea.add(new SDTDistancias(Integer.parseInt(informacion[0]), Integer.parseInt(informacion[1]),
+		 	        			Double.parseDouble(informacion[2]), Double.parseDouble(informacion[3])));
+		 	        	
+		 	            line = distancias.readLine();
+		 	        }
+		 	        
+		 	       this.tiempos.put(Integer.parseInt(lineas[i]),tiempoLinea);
 	 	        
-	 	       this.tiempos.put(Integer.parseInt(lineas[i]),tiempoLinea);
- 	        
-	 	        distancias.close();
+		 	        distancias.close();
+       	        }
        	    }
        	    br.close();
        	    
