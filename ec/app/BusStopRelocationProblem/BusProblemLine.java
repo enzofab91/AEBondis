@@ -170,6 +170,53 @@ public class BusProblemLine extends Gene{
 		    	agregarParada(bps);
 			  }
 		}
+		
+		//para agregar diversidad, se redistribuyen pasajeros y se modifican paradas
+		int parada_modificar_diversidad = 0;
+		
+		//busco parada que no sea ni la primera ni la ultima para modificar la matriz OD
+		while ((parada_modificar_diversidad == 0) || (parada_modificar_diversidad == paradas.size() - 1)){
+			parada_modificar_diversidad = mt.nextInt(paradas.size());
+		}
+		
+		BusStop parada_modificar = paradas.get(parada_modificar_diversidad);
+		BusStop parada_anterior = paradas.get(parada_modificar_diversidad - 1);
+		BusStop parada_siguiente = paradas.get(parada_modificar_diversidad + 1);
+		
+		int cant_suben_modificar = mt.nextInt(parada_modificar.getSuben());
+		int cant_bajan_modificar = mt.nextInt(parada_modificar.getBajan());
+		
+		//distribuyo los que se mueven de parada en la siguiente y anterior
+		parada_modificar.setSuben(parada_modificar.getSuben() - cant_suben_modificar);
+		parada_anterior.setSuben(parada_anterior.getSuben() + cant_suben_modificar/2);
+		parada_siguiente.setSuben(parada_siguiente.getSuben() + cant_suben_modificar/2);
+		
+		parada_modificar.setBajan(parada_modificar.getBajan() - cant_bajan_modificar);
+		parada_anterior.setBajan(parada_anterior.getBajan() + cant_bajan_modificar/2);
+		parada_siguiente.setBajan(parada_siguiente.getBajan() + cant_bajan_modificar/2);
+		
+		//busco parada que no sea ni la primera ni la ultima para modificar su ubicacion
+		while ((parada_modificar_diversidad == 0) || (parada_modificar_diversidad == paradas.size() - 1)){
+			parada_modificar_diversidad = mt.nextInt(paradas.size());
+		}
+		
+		int cant_maxima_desplazar = Parametros.getParameterInt("NuevaDistanciaMaxima");
+		int cant_desplazar = mt.nextInt(cant_maxima_desplazar);
+		
+		/* Se calculan las coordenadas de la nueva parada a partir de la parada anterior y el desplazamiento */
+		BusStop parada_desplazar = paradas.get(parada_modificar_diversidad);
+		double[] coordinates = Operaciones.nuevaUbicacion(parada_desplazar.getLatitud(), 
+				parada_desplazar.getLongitud(), cant_desplazar);
+		double nueva_longitud = coordinates[0], nueva_latitud = coordinates[1];
+		
+		/* Se crea la nueva parada, a partir de las coordenadas, y las personas que */
+		/* se encontraban en la parada												*/
+		BusStop parada_nueva = new BusStop(parada_desplazar.getSuben(), parada_desplazar.getBajan(), 
+				BusStop.getNuevoIdentificador(), nueva_longitud, nueva_latitud, EstadoParada.DESPLAZADA, cant_desplazar);
+		
+		//elimino la parada a desplazar y agrrrego la misma pero desplazada
+		paradas.remove(parada_modificar_diversidad);
+		paradas.add(parada_modificar_diversidad, parada_nueva);
 	}
 		
 	public void mutate(EvolutionState state, int thread) {
@@ -231,7 +278,7 @@ public class BusProblemLine extends Gene{
 		while (!existeCombinacion && iter.hasNext()){
 			stop1 = iter.next();
 			
-			if ((stop1.getEstado() != EstadoParada.ELIMINADA) && (stop1.getSuben() == 0)){
+			if ((stop1.getEstado() != EstadoParada.ELIMINADA) && (stop1.getSuben() == 0) && (iter.hasNext())){
 				stop2 = iter.next();
 				if ((stop2.getEstado() != EstadoParada.ELIMINADA) && (stop2.getSuben() == 0)){
 					/* CONSECUTIVAS. Corto la busqueda */

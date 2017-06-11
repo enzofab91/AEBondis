@@ -5,6 +5,7 @@ generations				= 1000
 quit-on-run-complete	= true
 
 stat		= ec.simple.SimpleStatistics
+stat.file	= $out.stat
 
 # Defino las variables generales al problema
 pop 				= ec.Population

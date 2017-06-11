@@ -78,8 +78,8 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 				  				distancia = Operaciones.calcularDistancia(j_esimaParada.getLatitud(),j_esimaParada.getLongitud(),
 				  						t_esimaParada.getLatitud(),t_esimaParada.getLongitud());
 				  				
-				  				//La velocidad esta en km/h, se divide para pasar a m/s
-				  				velocidad = (double)Parametros.getParameterInt("VelocidadPromedio") / 3.6;
+				  				//La velocidad esta en km/h, se multiplica para pasar a m/s
+				  				velocidad = (double)Parametros.getParameterInt("VelocidadPromedio") * 3.6;
 				  				tiempoEntreParadas = distancia / velocidad;
 			  				} else {
 			  					distancia = Operaciones.obtenerDistancia(distancias, j_esimaParada, t_esimaParada);
@@ -110,11 +110,11 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 			  				// Fitness1: minimizar el tiempo de recorrido
 			  				fitness1 += stopTime + (j_esimaParada.getSuben() * boardTime) + 
 			  						(alightTime * j_esimaParada.getBajan()) + tiempoEntreParadas +
-			  						(walkingSpeed * dist_a_nueva_parada);
+			  						((walkingSpeed * 3.6) * dist_a_nueva_parada); //walking speed de km/h a m/s
 			  				
 			  				// Fitness 2: maximizar la ganancia de la empresa (ganancia - costos)
 			  				fitness2 += (j_esimaParada.getSuben() * gananciaPorViaje) - 
-			  						(costoCombustible + costoSalario) * distancia;
+			  						(costoCombustible + costoSalario) * (distancia / 1000); //distancia de m a km
 		  	  			}
 		  	  		}
 		  	  	}
