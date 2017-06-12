@@ -227,12 +227,12 @@ public class BusProblemLine extends Gene{
 		BusStop parada_desplazar = paradas.get(parada_modificar_diversidad);
 		double[] coordinates = Operaciones.nuevaUbicacion(parada_desplazar.getLatitud(),
 				parada_desplazar.getLongitud(), cant_desplazar);
-		double nueva_longitud = coordinates[0], nueva_latitud = coordinates[1];
-
+		double nueva_latitud = coordinates[0], nueva_longitud = coordinates[1];
+		
 		/* Se crea la nueva parada, a partir de las coordenadas, y las personas que */
 		/* se encontraban en la parada												*/
 		BusStop parada_nueva = new BusStop(parada_desplazar.getSuben(), parada_desplazar.getBajan(), 
-				parada_desplazar.getParada(), nueva_longitud, nueva_latitud, EstadoParada.DESPLAZADA, cant_desplazar);
+				parada_desplazar.getParada(), nueva_latitud, nueva_longitud, EstadoParada.DESPLAZADA, cant_desplazar);
 		
 		//elimino la parada a desplazar y agrrrego la misma pero desplazada
 		paradas.remove(parada_modificar_diversidad);

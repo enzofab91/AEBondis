@@ -110,15 +110,15 @@ public class Operaciones {
 		final int R = 6378137;
 	
 		//Coordinate offsets in radians
-		double dLat = (desplazamiento*100)/R;
-		double dLon = (desplazamiento*100)/(R*Math.cos(Math.PI*lat/180));
+		double dLat = (desplazamiento)/R;
+		double dLon = (desplazamiento)/(R*Math.cos(Math.PI*lat/180));
 	
 		//OffsetPosition, decimal degrees
-		double nueva_longitud = lat + dLat * 180/Math.PI;
-		double nueva_latitud = lon + dLon * 180/Math.PI;
+		double nueva_latitud = lat + dLat * 180/Math.PI;
+		double nueva_longitud = lon + dLon * 180/Math.PI;
 		
-		coordinates[0] = nueva_longitud;
-	    coordinates[1] = nueva_latitud;
+		coordinates[0] = nueva_latitud;
+	    coordinates[1] = nueva_longitud;
 	    
 	    return coordinates;
 	}
