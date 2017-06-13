@@ -1,10 +1,10 @@
 parent.0 = ../moosuite/moosuite.params
 eval.problem		= ec.app.BusStopRelocationProblem.BusStopRelocationProblem
 
-generations				= 1000
+generations				= 100
 quit-on-run-complete	= true
 
-stat		= ec.simple.SimpleStatistics
+stat		= ec.multiobjective.MultiObjectiveStatistics
 stat.file	= $out.stat
 
 # Defino las variables generales al problema

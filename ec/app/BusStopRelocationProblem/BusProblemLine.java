@@ -242,9 +242,12 @@ public class BusProblemLine extends Gene{
 	public void mutate(EvolutionState state, int thread) {
 		String mutacion = Parametros.getParameterString("Mutacion");
 		
-		if (mutacion.equals("ElegirAccion"))
+		if (mutacion.equals("ElegirAccion")){
 			mutateElegirAccion(state, thread);
-		else
+		
+			//funcion correctiva
+			mutateBusquedaParadaInnecesaria(state, thread);
+		} else
 			mutateBusquedaParadaInnecesaria(state, thread);
 	}
 	
