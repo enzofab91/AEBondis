@@ -1,11 +1,11 @@
-RutaArchivos:/home/enzofabbiani/Desktop/PROYECTO/AEBondis/generador_instancias/instancias/prueba2/
+RutaArchivos:/home/enzofabbiani/Desktop/PROYECTO/AEBondis/generador_instancias/instancias/chicas/1/
 ArchivoLineas:lineas
 CantidadMaximaPasajeros:57
 CantidadParadas:7800
 NuevaDistanciaMaxima:500
 CostoCombustible:5
 CostoSalario:100
-GananciaPorViaje:33
+GananciaPorViaje:29
 StopTime:5
 BoardTime:5
 AlightTime:3

@@ -11,9 +11,13 @@ import java.util.Arrays;
 import ec.EvolutionState;
 import ec.Individual;
 import ec.Subpopulation;
+import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
+import ec.app.BusStopRelocationProblem.utils.Parametros;
 import ec.multiobjective.MultiObjectiveFitness;
 import ec.simple.SimpleStatistics;
 import ec.util.*;
+import ec.vector.GeneVectorIndividual;
+
 import java.io.*;
 
 /* 
@@ -122,7 +126,8 @@ public class MultiObjectiveStatistics extends SimpleStatistics
             if (doFinal)
                 for (int i = 0; i < sortedFront.length; i++)
                     ((Individual)(sortedFront[i])).printIndividualForHumans(state, statisticslog);
-                
+            
+            
             // write short version of front out to disk
             if (!silentFront)
                 {
@@ -141,5 +146,22 @@ public class MultiObjectiveStatistics extends SimpleStatistics
                     }
                 }
             }
+        
+	        /* Genero archivo con ls solucion */
+	        try {
+	        	File fout = new File(Parametros.getWorkingPath() + "solucion.out");
+	            FileOutputStream fos = new FileOutputStream(fout);
+	            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+	            
+	            GeneVectorIndividual ind = (GeneVectorIndividual) best_of_run[0];
+	            for (int i= 0; i < ind.genome.length;i++){
+	                bw.write(i + "," + ind.genome[i].toString());
+	                bw.newLine();
+	            }
+	            bw.write(best_of_run.toString());
+	            bw.close();
+	        } catch (IOException e){
+	        	System.out.println("ERROR: SimpleStatistics falla al escribir solucion.");
+	        }
         }
     }

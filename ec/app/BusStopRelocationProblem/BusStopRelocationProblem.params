@@ -1,7 +1,7 @@
 parent.0 = ../moosuite/moosuite.params
 eval.problem		= ec.app.BusStopRelocationProblem.BusStopRelocationProblem
 
-generations				= 100
+generations				= 5000
 quit-on-run-complete	= true
 
 stat		= ec.multiobjective.MultiObjectiveStatistics
@@ -24,12 +24,15 @@ pop.subpop.0.species.genome-size	= 10
 pop.subpop.0.species.crossover-type	= one
 #pop.subpop.0.species.crossover-prop = 0.25 #para cuando es uniforme
 pop.subpop.0.species.mutation-type	= reset
-pop.subpop.0.species.mutation-prob	= 0.01
 
+#MUTACION
+pop.subpop.0.species.mutation-prob	= 0.1
+
+#CRUZAMIENTO
 pop.subpop.0.species.pipe		     			= ec.vector.breed.VectorMutationPipeline
 pop.subpop.0.species.pipe.likelihood        	= 1.0
 pop.subpop.0.species.pipe.source.0				= ec.vector.breed.VectorCrossoverPipeline
-pop.subpop.0.species.pipe.source.0.likelihood 	= 0.75
+pop.subpop.0.species.pipe.source.0.likelihood 	= 0.6
 pop.subpop.0.species.pipe.source.0.source.0 	= ec.select.TournamentSelection
 pop.subpop.0.species.pipe.source.0.source.1 	= same
 select.tournament.size 							= 2
