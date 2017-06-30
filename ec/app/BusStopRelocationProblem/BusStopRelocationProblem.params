@@ -1,8 +1,10 @@
 parent.0 = ../moosuite/moosuite.params
 eval.problem		= ec.app.BusStopRelocationProblem.BusStopRelocationProblem
 
-generations				= 5000
+evalthreads				= 2
+generations				= 40
 quit-on-run-complete	= true
+#jobs					= 30
 
 stat		= ec.multiobjective.MultiObjectiveStatistics
 stat.file	= $out.stat
@@ -18,7 +20,8 @@ pop.subpop.0.species.ind 	= ec.vector.GeneVectorIndividual
 pop.subpop.0.species.gene 	= ec.app.BusStopRelocationProblem.BusProblemLine
 
 pop.subpop.0.species.fitness.num-objectives = 2
-pop.subpop.0.species.fitness.maximize = true
+pop.subpop.0.species.fitness.maximize.0 = false
+pop.subpop.0.species.fitness.maximize.1 = true
 
 pop.subpop.0.species.genome-size	= 10
 pop.subpop.0.species.crossover-type	= one
@@ -26,7 +29,7 @@ pop.subpop.0.species.crossover-type	= one
 pop.subpop.0.species.mutation-type	= reset
 
 #MUTACION
-pop.subpop.0.species.mutation-prob	= 0.1
+pop.subpop.0.species.mutation-prob	= 0.05
 
 #CRUZAMIENTO
 pop.subpop.0.species.pipe		     			= ec.vector.breed.VectorMutationPipeline
@@ -38,3 +41,4 @@ pop.subpop.0.species.pipe.source.0.source.1 	= same
 select.tournament.size 							= 2
 
 seed.0		= time
+seed.1		= time

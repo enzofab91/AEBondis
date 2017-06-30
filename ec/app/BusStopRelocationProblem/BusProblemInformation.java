@@ -27,10 +27,15 @@ public class BusProblemInformation {
 	private int cantParadas = Parametros.getParameterInt("CantidadParadas"); // Cantidad de paradas del problema
 	private int cantMaximaPasajeros = Parametros.getParameterInt("CantidadMaximaPasajeros"); // Cantidad de pasajeros maxima por bus
 	private int nuevaDistanciaMaxima = Parametros.getParameterInt("NuevaDistanciaMaxima"); // Distancia maxima que se desplaza una parada 
-			
+	
+	private String tipoMutacion = Parametros.getParameterString("Mutacion");
+	private String tipoDistancia = Parametros.getParameterString("Distancias");
+	private String tipoCrossover = Parametros.getParameterString("Crossover");
+	
 	private int gananciaPorViaje = Parametros.getParameterInt("GananciaPorViaje");
 	private int costoCombustible = Parametros.getParameterInt("CostoCombustible");
 	private int costoSalario = Parametros.getParameterInt("CostoSalario");
+	private int velocidadPromedio = Parametros.getParameterInt("VelocidadPromedio");
 	
 	private int stopTime = Parametros.getParameterInt("StopTime"); // Tiempo necesario del bus en parar
 	private int boardTime = Parametros.getParameterInt("BoardTime"); // Tiempo necesario para que el pasajero suba
@@ -92,6 +97,22 @@ public class BusProblemInformation {
     
     public int getNuevaDistanciaMaxima() {
 		return this.nuevaDistanciaMaxima;
+	}
+    
+    public String getTipoMutacion() {
+		return this.tipoMutacion;
+	}
+    
+    public String getTipoDistancia() {
+		return this.tipoDistancia;
+	}
+    
+    public int getVelocidadPromedio() {
+		return this.velocidadPromedio;
+	}
+    
+    public String getTipoCrossover() {
+		return this.tipoCrossover;
 	}
     
     public Map<Integer, SDTCoordenadas> getCoordenadas() {

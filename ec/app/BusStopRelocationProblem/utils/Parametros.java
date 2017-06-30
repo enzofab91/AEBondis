@@ -38,7 +38,7 @@ public class Parametros {
 	
 	public static int getParameterInt(String ParameterName){
 		int valor = 0;
-
+		
 		try {
 			String parameterPath = getWorkingPath() + "parametros";
 			BufferedReader parametros = new BufferedReader(new FileReader(parameterPath));

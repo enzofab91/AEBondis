@@ -8,11 +8,11 @@
 package ec.vector;
 
 import ec.*;
+import ec.app.BusStopRelocationProblem.BusProblemInformation;
 import ec.app.BusStopRelocationProblem.BusProblemLine;
 import ec.app.BusStopRelocationProblem.BusStop;
 import ec.app.BusStopRelocationProblem.EstadoParada;
 import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
-import ec.app.BusStopRelocationProblem.utils.Parametros;
 import ec.util.*;
 import java.io.*;
 import java.util.LinkedList;
@@ -131,8 +131,9 @@ public class GeneVectorIndividual extends VectorIndividual
         if (len != genome.length || len != i.genome.length)
             state.output.warnOnce("Genome lengths are not the same.  Vector crossover will only be done in overlapping region.");
         
-        String crossover = Parametros.getParameterString("Crossover");
-        
+        BusProblemInformation information = BusProblemInformation.getBusProblemInformation();
+        String crossover = information.getTipoCrossover();
+
         if (!crossover.equals("Custom")){
 	        switch(s.crossoverType)
 	            {
@@ -212,10 +213,10 @@ public class GeneVectorIndividual extends VectorIndividual
 	                            }
 	                break;
 	            }
-        } else
+        } else {
         	//customCrossover(state, thread, ind);
         	customSPCrossoverParadas(state, thread, ind);
-        }
+        }}
     
     public void customCrossover(EvolutionState state, int thread, VectorIndividual ind1){
     	GeneVectorSpecies spe = (GeneVectorSpecies) species;
@@ -224,7 +225,7 @@ public class GeneVectorIndividual extends VectorIndividual
 		int cantidadLineas = spe.getCantidadLineas();
 		int parada, iter, cantidadParadas;
 		boolean encontre;
-		
+        
 		for(int i = 0; i < cantidadLineas; i++){
 			parada = 0;
 			BusStop busStop1 = null;
@@ -263,7 +264,6 @@ public class GeneVectorIndividual extends VectorIndividual
 					linea1.setAsientosDisponibles(linea1.getAsientosDisponibles() - busStop2.getSuben() + busStop2.getBajan());
 				}
 			}
-			
 		}
     }
     
@@ -278,7 +278,7 @@ public class GeneVectorIndividual extends VectorIndividual
 			//obtengo la info de la linea a cruzar, y el punto de corte al azar
 			BusProblemLine linea1 = (BusProblemLine)genome[i];
 			BusProblemLine linea2 = (BusProblemLine)ind2.genome[i];
-			
+	        
 			List<BusStop> paradas1 = linea1.getParadas();
 			List<BusStop> paradas2 = linea2.getParadas();
 
@@ -309,10 +309,12 @@ public class GeneVectorIndividual extends VectorIndividual
 				}
 				
 				//chequeo que no exceda la capacidad maxima con el cruzamiento
-				if (chequearCapacidad(linea1) && chequearCapacidad(linea2)){
+				//if (chequearCapacidad(linea1) && chequearCapacidad(linea2)){
+				//no se controla mas, porque el maximo es tomando en cuenta una unica linea
+				//y el algoritmo trabaja con franjas horarias, es decir muchas lineas
 					linea1.setParadas(nuevasParadasLinea1);
 					linea2.setParadas(nuevasParadasLinea2);
-				}
+				//}
 			}
 		}
     }
@@ -320,7 +322,9 @@ public class GeneVectorIndividual extends VectorIndividual
     private boolean chequearCapacidad(BusProblemLine linea){
     	boolean lineaValida = false;
     	
-    	int capacidadMaxima = Parametros.getParameterInt("CantidadMaximaPasajeros");
+    	BusProblemInformation information = BusProblemInformation.getBusProblemInformation();
+    	int capacidadMaxima = information.getCantidadMaximaPasajeros();
+    	
     	List<BusStop> paradas = linea.getParadas();
     	
     	int capacidadActual = 0;
@@ -377,6 +381,7 @@ public class GeneVectorIndividual extends VectorIndividual
     public void defaultMutate(EvolutionState state, int thread)
         {
         GeneVectorSpecies s = (GeneVectorSpecies) species;
+        
         for(int x=0;x<genome.length;x++)
             {
             if (state.random[thread].nextBoolean(s.mutationProbability(x)))

@@ -6,16 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+
 import ec.EvolutionState;
-import ec.Population;
 import ec.app.BusStopRelocationProblem.BusStop;
 import ec.app.BusStopRelocationProblem.SDTs.SDTCoordenadas;
 import ec.app.BusStopRelocationProblem.SDTs.SDTSubenBajan;
 import ec.app.BusStopRelocationProblem.utils.DebugFileLog;
-import ec.app.BusStopRelocationProblem.utils.Parametros;
 import ec.util.MersenneTwister;
 import ec.vector.Gene;
-import ec.vector.VectorIndividual;
 
 public class BusProblemLine extends Gene{
 	private int linea;
@@ -45,7 +43,9 @@ public class BusProblemLine extends Gene{
 	}
 	
 	public void setAsientosDisponibles(int asientosDisponibles) {
-		int cantidadMaximaPasajeros = Parametros.getParameterInt("CantidadMaximaPasajeros");
+		BusProblemInformation information = BusProblemInformation.getBusProblemInformation();
+		int cantidadMaximaPasajeros = information.getCantidadMaximaPasajeros();
+		
 		if(this.asientosDisponibles > cantidadMaximaPasajeros)
 			this.asientosDisponibles = cantidadMaximaPasajeros;
 		else if(this.asientosDisponibles < 0)
@@ -146,7 +146,7 @@ public class BusProblemLine extends Gene{
 		}
 			
 		this.linea = linea;
-		this.asientosDisponibles = Parametros.getParameterInt("CantidadMaximaPasajeros");
+		this.asientosDisponibles = information.getCantidadMaximaPasajeros();
 		Iterator<Integer> ordenParadas = information.getOrdenParadas().get(linea).iterator();
 		
 		this.paradas = new LinkedList<BusStop>();
@@ -220,7 +220,7 @@ public class BusProblemLine extends Gene{
 			parada_modificar_diversidad = mt.nextInt(paradas.size());
 		}
 		
-		int cant_maxima_desplazar = Parametros.getParameterInt("NuevaDistanciaMaxima");
+		int cant_maxima_desplazar = information.getNuevaDistanciaMaxima();
 		int cant_desplazar = mt.nextInt(cant_maxima_desplazar);
 		
 		/* Se calculan las coordenadas de la nueva parada a partir de la parada anterior y el desplazamiento */
@@ -234,13 +234,14 @@ public class BusProblemLine extends Gene{
 		BusStop parada_nueva = new BusStop(parada_desplazar.getSuben(), parada_desplazar.getBajan(), 
 				parada_desplazar.getParada(), nueva_latitud, nueva_longitud, EstadoParada.DESPLAZADA, cant_desplazar);
 		
-		//elimino la parada a desplazar y agrrrego la misma pero desplazada
+		//elimino la parada a desplazar y agrego la misma pero desplazada
 		paradas.remove(parada_modificar_diversidad);
 		paradas.add(parada_modificar_diversidad, parada_nueva);
 	}
 		
 	public void mutate(EvolutionState state, int thread) {
-		String mutacion = Parametros.getParameterString("Mutacion");
+		BusProblemInformation information = BusProblemInformation.getBusProblemInformation();
+		String mutacion = information.getTipoMutacion();
 		
 		if (mutacion.equals("ElegirAccion")){
 			mutateElegirAccion(state, thread);

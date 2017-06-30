@@ -3,7 +3,7 @@ ArchivoLineas:lineas
 CantidadMaximaPasajeros:57
 CantidadParadas:7800
 NuevaDistanciaMaxima:500
-CostoCombustible:5
+CostoCombustible:1
 CostoSalario:100
 GananciaPorViaje:29
 StopTime:5
