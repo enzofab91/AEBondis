@@ -177,7 +177,7 @@ public class BusProblemLine extends Gene{
 		    	agregarParada(bps);
 			  }
 		}
-				
+		
 		//para agregar diversidad, se redistribuyen pasajeros y se modifican paradas
 		int parada_modificar_diversidad = 0;
 		
@@ -277,6 +277,16 @@ public class BusProblemLine extends Gene{
 		//mutamos la parada si corresponde
 		if (accion != 0){
 			if(accion == -1){
+				
+				//trasladamos personas a parada siguiente y anterior
+				BusStop parada_siguiente = paradas.get(parada_mutar + 1); //parada siguiente
+				BusStop parada_anterior = paradas.get(parada_mutar - 1); //parada anterior
+				
+				parada_siguiente.setSuben(parada_siguiente.getSuben() + paradas.get(parada_mutar).getSuben());
+				parada_siguiente.setBajan(parada_siguiente.getBajan() + paradas.get(parada_mutar).getBajan());
+				parada_anterior.setSuben(parada_anterior.getSuben() + paradas.get(parada_mutar).getSuben());
+				parada_anterior.setBajan(parada_anterior.getBajan() + paradas.get(parada_mutar).getBajan());
+				
 				quitarParada(parada_mutar);
 			}
 			else {

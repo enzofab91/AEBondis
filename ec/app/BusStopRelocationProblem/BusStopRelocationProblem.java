@@ -112,7 +112,8 @@ public class BusStopRelocationProblem extends Problem implements SimpleProblemFo
 				  						((walkingSpeed * 3.6) * dist_a_nueva_parada); //walking speed de km/h a m/s
 				  				
 				  				// Fitness 2: maximizar la ganancia de la empresa (ganancia - costos)
-				  				fitness2 += (j_esimaParada.getSuben() * gananciaPorViaje) - 
+				  				//el 10k es para que el fitness de un valor positivo
+				  				fitness2 += 10000 * (j_esimaParada.getSuben() * gananciaPorViaje) - 
 				  						(costoCombustible + costoSalario) * (distancia / 1000); //distancia de m a km
 				  			}
 		  	  			}
