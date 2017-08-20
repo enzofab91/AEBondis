@@ -139,16 +139,15 @@ public class BusProblemLine extends Gene{
 		
 		int posicion = information.getLineaActual(); //entry.getKey();
 		String linea = "";
-		DebugFileLog.DebugFileLog("prueba", "posicion = " + Integer.toString(posicion));
+		
 		for (Entry<String, Integer> entry : lineas.entrySet()) {
-			DebugFileLog.DebugFileLog("prueba", "key = " + entry.getKey() + " - value = " + entry.getValue());
 			if (entry.getValue().equals(posicion))
 				linea = entry.getKey();
 		}
-		DebugFileLog.DebugFileLog("prueba", "linea = " + linea);
+		
 		this.linea = linea;
 		this.asientosDisponibles = information.getCantidadMaximaPasajeros();
-		Iterator<Integer> ordenParadas = information.getOrdenParadas().get(linea).iterator();
+		Iterator<Integer> ordenParadas = information.getOrdenParadas().get(posicion).iterator();
 		
 		this.paradas = new LinkedList<BusStop>();
 		while(ordenParadas.hasNext()){

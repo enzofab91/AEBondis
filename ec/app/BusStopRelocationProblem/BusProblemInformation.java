@@ -198,14 +198,14 @@ public class BusProblemInformation {
        	    	line = pasajeros.readLine();
        	    	
        	    	/* Inicializo para la linea i, su lista de paradas */
-       	    	this.ordenParadas.put(Integer.parseInt(lineas[i]), new LinkedList<Integer>());
+       	    	this.ordenParadas.put(i, new LinkedList<Integer>());
        	    	
        	        while (line != null) {
        	        	String[] linea = line.split(",");
        	        	SDTSubenBajan SDT = new SDTSubenBajan(Integer.parseInt(linea[1]), Integer.parseInt(linea[2]));
        	        	
        	        	this.MatrizDemanda[i][Integer.parseInt(linea[0])] = SDT;
-       	        	this.ordenParadas.get(Integer.parseInt(lineas[i])).add(Integer.parseInt(linea[0]));
+       	        	this.ordenParadas.get(i).add(Integer.parseInt(linea[0]));
        	        	
        	            line = pasajeros.readLine();
        	        }
@@ -231,7 +231,7 @@ public class BusProblemInformation {
 		 	            line = distancias.readLine();
 		 	        }
 		 	        
-		 	       this.tiempos.put(Integer.parseInt(lineas[i]),tiempoLinea);
+		 	       this.tiempos.put(i,tiempoLinea);
 	 	        
 		 	        distancias.close();
        	        }
