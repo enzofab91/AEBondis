@@ -2,9 +2,9 @@ parent.0 = ../moosuite/moosuite.params
 eval.problem		= ec.app.BusStopRelocationProblem.BusStopRelocationProblem
 
 evalthreads				= 2
-generations				= 40
+generations				= 10000
 quit-on-run-complete	= true
-#jobs					= 30
+jobs					= 30
 
 stat		= ec.multiobjective.MultiObjectiveStatistics
 stat.file	= $out.stat
@@ -13,7 +13,7 @@ stat.file	= $out.stat
 pop 				= ec.Population
 pop.subpops  		= 1
 pop.subpop.0 		= ec.Subpopulation
-pop.subpop.0.size 	= 50
+pop.subpop.0.size 	= 100
 
 pop.subpop.0.species 		= ec.vector.GeneVectorSpecies
 pop.subpop.0.species.ind 	= ec.vector.GeneVectorIndividual
@@ -35,7 +35,7 @@ pop.subpop.0.species.mutation-prob	= 0.05
 pop.subpop.0.species.pipe		     			= ec.vector.breed.VectorMutationPipeline
 pop.subpop.0.species.pipe.likelihood        	= 1.0
 pop.subpop.0.species.pipe.source.0				= ec.vector.breed.VectorCrossoverPipeline
-pop.subpop.0.species.pipe.source.0.likelihood 	= 0.6
+pop.subpop.0.species.pipe.source.0.likelihood 	= 0.9
 pop.subpop.0.species.pipe.source.0.source.0 	= ec.select.TournamentSelection
 pop.subpop.0.species.pipe.source.0.source.1 	= same
 select.tournament.size 							= 2

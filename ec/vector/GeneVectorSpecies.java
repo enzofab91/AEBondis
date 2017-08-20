@@ -96,7 +96,7 @@ public class GeneVectorSpecies extends VectorSpecies
 	/* omnibus 100 es la posición 0, el 102 es la posición 1..). Esto se utiliza para que sea mas facil 	*/
 	/* y eficiente el almacenamiento. Si se utilizaran las lineas 100 y 582, la matriz de pasajeros deberia */
 	/* ser de largo 582 y con esto alcanza largo 2.															*/
-	private Map<Integer,Integer> correlacion = new HashMap<Integer,Integer>();
+	private Map<String,Integer> correlacion = new HashMap<String,Integer>();
 	
 	/* Un map que almacena para cada linea, una lista de sus paradas en orden desde el origen la destino */
 	private Map<Integer,List<Integer>> ordenParadas = new HashMap<Integer, List<Integer>>();
@@ -127,7 +127,7 @@ public class GeneVectorSpecies extends VectorSpecies
 		return this.coordenadas;
 	}
     
-    public Map<Integer, Integer> getCorrelacion() {
+    public Map<String, Integer> getCorrelacion() {
 		return this.correlacion;
 	}
     
@@ -174,15 +174,15 @@ public class GeneVectorSpecies extends VectorSpecies
     public final void printProblem(){
     	/* Imprime todas las variables del problema. Utilizado para verificar correecta carga de informacion */
     	try {
-    		Iterator<Map.Entry<Integer, Integer>> it = this.correlacion.entrySet().iterator();
+    		Iterator<Map.Entry<String, Integer>> it = this.correlacion.entrySet().iterator();
   		  	PrintWriter writer = null;
   		  	String filesPath = Parametros.getParameterString("RutaArchivos");
   		  	
   		  	while (it.hasNext()) {
-  		  		Map.Entry<Integer, Integer> pair = it.next();
+  		  		Map.Entry<String, Integer> pair = it.next();
   		      
   		  		/* Imprime matriz de demanda */
-  		  		writer = new PrintWriter(filesPath + "debug/debug_" + Integer.toString(pair.getKey()) + "_pasajeros", "UTF-8");
+  		  		writer = new PrintWriter(filesPath + "debug/debug_" + pair.getKey() + "_pasajeros", "UTF-8");
   		  		
   		  		for(int i = 1; i < this.cantParadas; i++){
   		    		if (this.MatrizDemanda[pair.getValue()][i] != null)
@@ -194,7 +194,7 @@ public class GeneVectorSpecies extends VectorSpecies
   		  		writer.close();
   		      
   		  		/* Imprime orden de paradas */ 
-  		  		writer = new PrintWriter(filesPath + "debug/debug_" + Integer.toString(pair.getKey()) + "_orden", "UTF-8");
+  		  		writer = new PrintWriter(filesPath + "debug/debug_" + pair.getKey() + "_orden", "UTF-8");
   		  		Iterator<Integer> it2 = this.ordenParadas.get(pair.getKey()).iterator();
   		      
   		  		while(it2.hasNext())
@@ -204,7 +204,7 @@ public class GeneVectorSpecies extends VectorSpecies
   		  		writer.close();  
   		  		
   		  		/* Imprime tiempos de recorrido */ 
-  		  		writer = new PrintWriter(filesPath + "debug/debug_" + Integer.toString(pair.getKey()) + "_tiempos", "UTF-8");
+  		  		writer = new PrintWriter(filesPath + "debug/debug_" + pair.getKey() + "_tiempos", "UTF-8");
   		  		Iterator<SDTDistancias> it3 = this.tiempos.get(pair.getKey()).iterator();
   		      
   		  		while(it3.hasNext())

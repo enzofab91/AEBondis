@@ -61,7 +61,7 @@ public class BusProblemInformation {
 	/* omnibus 100 es la posición 0, el 102 es la posición 1..). Esto se utiliza para que sea mas facil 	*/
 	/* y eficiente el almacenamiento. Si se utilizaran las lineas 100 y 582, la matriz de pasajeros deberia */
 	/* ser de largo 582 y con esto alcanza largo 2.															*/
-	private Map<Integer,Integer> correlacion = new HashMap<Integer,Integer>();
+	private Map<String,Integer> correlacion = new HashMap<String,Integer>();
 	
 	/* Un map que almacena para cada linea, una lista de sus paradas en orden desde el origen la destino */
 	private Map<Integer,List<Integer>> ordenParadas = new HashMap<Integer, List<Integer>>();
@@ -119,7 +119,7 @@ public class BusProblemInformation {
 		return this.coordenadas;
 	}
     
-    public Map<Integer, Integer> getCorrelacion() {
+    public Map<String, Integer> getCorrelacion() {
 		return this.correlacion;
 	}
     
@@ -190,7 +190,7 @@ public class BusProblemInformation {
 
        	    for(int i = 0; i < this.cantLines; i++){
        	    	/* Agrego la correlacion entre la parada y la posicion en la matriz de demanda */
-       	    	this.correlacion.put(Integer.parseInt(lineas[i]), i);
+       	    	this.correlacion.put(lineas[i], i);
        	    	
        	        /* Leo la cantidad de pasajeros que suben y bajan en cada parada de la linea y lo almaceno en la matriz de demanda */
        	        BufferedReader pasajeros = new BufferedReader(new FileReader(filesPath + lineas[i]+ "_pasajeros"));

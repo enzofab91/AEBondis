@@ -16,7 +16,7 @@ import ec.util.MersenneTwister;
 import ec.vector.Gene;
 
 public class BusProblemLine extends Gene{
-	private int linea;
+	private String linea;
 	private int asientosDisponibles;
 	private List<BusStop> paradas;
 	
@@ -25,12 +25,12 @@ public class BusProblemLine extends Gene{
 	/* FUNCIONES PROPIAS DE BUS PROBLEM LINE */
 	public BusProblemLine(){};
 	
-	public BusProblemLine(int linea, int asientosDisponibles){
+	public BusProblemLine(String linea, int asientosDisponibles){
 		this.linea = linea;
 		this.asientosDisponibles = asientosDisponibles;
 	}
 	
-	public int getLine(){
+	public String getLine(){
 		return this.linea;
 	}
 	
@@ -135,16 +135,17 @@ public class BusProblemLine extends Gene{
 		BusProblemInformation information = BusProblemInformation.getBusProblemInformation();
 		SDTSubenBajan[][] matrizPasajeros = information.getMatrizDemanda();
 		Map<Integer, SDTCoordenadas> coordenadas = information.getCoordenadas();
-		Map<Integer, Integer> lineas = information.getCorrelacion();
+		Map<String, Integer> lineas = information.getCorrelacion();
 		
 		int posicion = information.getLineaActual(); //entry.getKey();
-		int linea = 0;
-		
-		for (Entry<Integer, Integer> entry : lineas.entrySet()) {
+		String linea = "";
+		DebugFileLog.DebugFileLog("prueba", "posicion = " + Integer.toString(posicion));
+		for (Entry<String, Integer> entry : lineas.entrySet()) {
+			DebugFileLog.DebugFileLog("prueba", "key = " + entry.getKey() + " - value = " + entry.getValue());
 			if (entry.getValue().equals(posicion))
 				linea = entry.getKey();
 		}
-			
+		DebugFileLog.DebugFileLog("prueba", "linea = " + linea);
 		this.linea = linea;
 		this.asientosDisponibles = information.getCantidadMaximaPasajeros();
 		Iterator<Integer> ordenParadas = information.getOrdenParadas().get(linea).iterator();
@@ -361,7 +362,7 @@ public class BusProblemLine extends Gene{
 	/* FIN DE MUTACION DE BUS STOP RELOCATION PROBLEM */
 	
 	public int hashCode() {
-		return linea;
+		return Integer.parseInt(linea);
 		//long a = Double.doubleToRawLongBits(x); long b = Double.doubleToRawLongBits(y);
 		//return (int) ((a & (int)-1) ^ (a >> 32) (b & (int)-1) ^ (b >> 32));
 	}
